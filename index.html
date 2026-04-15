@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>Techify.Max • Webdesigner premium</title>
+  <meta name="description" content="Um design premium para quem busca exclusividade | Websites de alto padrão para empresários que vão se diferenciar.">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  
+  <style>
+    /* ===== BACKGROUND PREMIUM (SEM AZUL) ===== */
+    body {
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at 20% 30%, #6c2bff20, transparent 40%),
+                  radial-gradient(circle at 80% 70%, #8fefef20, transparent 40%),
+                  radial-gradient(circle at 50% 50%, #ff00aa10, transparent 60%),
+                  #030305;
+      margin: 0;
+      overflow-x: hidden;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+    #bg-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.45;
+    }
+    main, header, footer, section, .relative, .content-layer {
+      position: relative;
+      z-index: 3;
+    }
+    .bg-gradient-hero {
+      background: radial-gradient(ellipse at 70% 30%, #603EFF20 0%, transparent 60%),
+                  radial-gradient(ellipse at 20% 80%, #9061EE20 0%, transparent 60%),
+                  #030305;
+    }
+    .glass-nav {
+      background: rgba(10, 10, 15, 0.65);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-card {
+      background: rgba(18, 18, 26, 0.6);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.4s, border-color 0.2s;
+    }
+    .tilt-card {
+      transform-style: preserve-3d;
+      transform: perspective(1000px) rotateX(0deg) rotateY(0deg);
+      transition: transform 0.1s ease, box-shadow 0.3s;
+      will-change: transform;
+    }
+    .tilt-card:hover {
+      box-shadow: 0 25px 40px -12px rgba(144, 97, 238, 0.25), 0 0 0 1px rgba(144, 97, 238, 0.2);
+    }
+    .text-gradient {
+      background: linear-gradient(135deg, #CEFF66 0%, #9061EE 50%, #A074FF 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .chromatic {
+      background: linear-gradient(135deg, #C1FF72, #A074FF, #CEFF66);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight: 700;
+    }
+    .border-gradient {
+      position: relative;
+      background: #13131C;
+      border-radius: 24px;
+    }
+    .border-gradient::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 24px;
+      padding: 1.5px;
+      background: linear-gradient(135deg, #CEFF66, #9061EE, #A074FF, #603EFF);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+    .selecionado {
+      background: linear-gradient(90deg, #9061EE 0%, #9061EE var(--bg-position, 0%), #ffffff var(--bg-position, 0%), #ffffff 100%);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      transition: --bg-position 0.1s linear;
+    }
+    
+    /* Animações de entrada estilo jornal */
+    .jornal-section {
+      opacity: 0;
+      transform: translateY(40px) rotateX(2deg);
+      transform-origin: center bottom;
+      transition: opacity 0.8s cubic-bezier(0.2, 0.9, 0.3, 1), transform 0.8s cubic-bezier(0.2, 0.9, 0.3, 1);
+      will-change: transform, opacity;
+    }
+    .jornal-section.visible {
+      opacity: 1;
+      transform: translateY(0) rotateX(0);
+    }
+    
+    .blur, .scroll-left, .scroll-right, .scroll-top, .scroll-bottom {
+      opacity: 0;
+      transition: opacity 0.9s cubic-bezier(0.2, 0.9, 0.3, 1), transform 0.9s ease;
+    }
+    .blur.ativo, .scroll-left.ativo, .scroll-right.ativo, .scroll-top.ativo, .scroll-bottom.ativo {
+      opacity: 1;
+      transform: translate(0, 0);
+    }
+    .scroll-left { transform: translateX(-40px); }
+    .scroll-right { transform: translateX(40px); }
+    .scroll-top { transform: translateY(-40px); }
+    .scroll-bottom { transform: translateY(40px); }
+    .blur { transform: scale(0.96); filter: blur(6px); }
+    .blur.ativo { transform: scale(1); filter: blur(0); }
+    
+    .textoanimado { overflow: hidden; white-space: nowrap; }
+    .textoanimado2 {
+      display: inline-block;
+      animation: scrollText 25s linear infinite;
+    }
+    @keyframes scrollText {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    
+    .faq details {
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding: 1.2rem 0;
+    }
+    .faq summary {
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-weight: 500;
+      color: white;
+    }
+    .faq summary::-webkit-details-marker { display: none; }
+    .faq summary i { transition: transform 0.3s; color: #9061EE; }
+    .faq details[open] summary i { transform: rotate(45deg); }
+    
+    /* Botão UIVERSE */
+    .btn-17,
+    .btn-17 *,
+    .btn-17 :after,
+    .btn-17 :before,
+    .btn-17:after,
+    .btn-17:before {
+      border: 0 solid;
+      box-sizing: border-box;
+    }
+    .btn-17 {
+      -webkit-tap-highlight-color: transparent;
+      -webkit-appearance: button;
+      background-color: #000;
+      background-image: none;
+      color: #fff;
+      cursor: pointer;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+        Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif,
+        Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+      font-size: 100%;
+      font-weight: 700;
+      line-height: 1.5;
+      margin: 0;
+      -webkit-mask-image: -webkit-radial-gradient(#000, #fff);
+      padding: 0;
+      text-transform: uppercase;
+      border-radius: 99rem;
+      border-width: 2px;
+      padding: 0.8rem 2.5rem;
+      z-index: 0;
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border-color: rgba(144, 97, 238, 0.6);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .btn-17:disabled { cursor: default; }
+    .btn-17:-moz-focusring { outline: auto; }
+    .btn-17 svg { display: block; vertical-align: middle; }
+    .btn-17 [hidden] { display: none; }
+    .btn-17, .btn-17 .text-container { overflow: hidden; position: relative; }
+    .btn-17 .text-container { display: block; mix-blend-mode: difference; }
+    .btn-17 .text { display: block; position: relative; }
+    .btn-17:hover .text {
+      -webkit-animation: move-up-alternate 0.3s forwards;
+      animation: move-up-alternate 0.3s forwards;
+    }
+    @keyframes move-up-alternate {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(80%); }
+      51% { transform: translateY(-80%); }
+      to { transform: translateY(0); }
+    }
+    .btn-17:after, .btn-17:before {
+      --skew: 0.2;
+      background: #fff;
+      content: "";
+      display: block;
+      height: 102%;
+      left: calc(-50% - 50% * var(--skew));
+      pointer-events: none;
+      position: absolute;
+      top: -104%;
+      transform: skew(calc(150deg * var(--skew))) translateY(var(--progress, 0));
+      transition: transform 0.2s ease;
+      width: 100%;
+    }
+    .btn-17:after {
+      --progress: 0%;
+      left: calc(50% + 50% * var(--skew));
+      top: 102%;
+      z-index: -1;
+    }
+    .btn-17:hover:before { --progress: 100%; }
+    .btn-17:hover:after { --progress: -102%; }
+    .btn-17 i {
+      font-size: 1.2em;
+      mix-blend-mode: difference;
+      position: relative;
+      z-index: 2;
+    }
+    .btn-17 .text-container i { margin-right: 6px; }
+    .btn-17-sm { padding: 0.5rem 1.5rem; font-size: 0.875rem; }
+
+    .techify-logo {
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #fff 0%, #C1FF72 50%, #A074FF 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-size: 1.6rem;
+    }
+    .techify-badge {
+      background: rgba(144,97,238,0.15);
+      border-radius: 40px;
+      padding: 0.2rem 0.8rem;
+      border: 1px solid rgba(144,97,238,0.3);
+      backdrop-filter: blur(8px);
+    }
+    .float-3d {
+      animation: float3d 8s ease-in-out infinite;
+    }
+    @keyframes float3d {
+      0% { transform: translateY(0px) rotateX(0deg) rotateY(0deg); }
+      50% { transform: translateY(-15px) rotateX(2deg) rotateY(3deg); }
+      100% { transform: translateY(0px) rotateX(0deg) rotateY(0deg); }
+    }
+    .hero-orb {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, #A074FF30 0%, transparent 70%);
+      border-radius: 50%;
+      filter: blur(70px);
+      opacity: 0.5;
+      animation: orbPulse 10s infinite alternate;
+    }
+    @keyframes orbPulse {
+      0% { transform: scale(1) translate(0,0); opacity: 0.4; }
+      100% { transform: scale(1.3) translate(30px, -30px); opacity: 0.7; }
+    }
+    #mouse-glow {
+      position: fixed;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(144,97,238,0.12) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 2;
+      transform: translate(-50%, -50%);
+      opacity: 0;
+      mix-blend-mode: screen;
+      transition: opacity 0.2s;
+    }
+    @media (max-width: 768px) {
+      .tilt-card { transform: none !important; }
+      .btn-17 { padding: 0.7rem 1.8rem; }
+    }
+
+    .blob {
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      background: linear-gradient(135deg, #7b2cff, #a074ff, #c1ff72);
+      filter: blur(90px);
+      border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+      animation: blobMove 12s ease-in-out infinite;
+      opacity: 0.5;
+      z-index: 1;
+    }
+    @keyframes blobMove {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(60px, -40px) scale(1.2); }
+      100% { transform: translate(0, 0) scale(1); }
+    }
+    .glow-hover:hover {
+      box-shadow: 0 0 25px rgba(160, 116, 255, 0.6),
+                  0 0 60px rgba(144, 97, 238, 0.3);
+      transform: translateY(-5px) scale(1.02);
+    }
+    .fade-up {
+      opacity: 0;
+      transform: translateY(40px);
+      animation: fadeUp 1s ease forwards;
+    }
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===== PRELOADER SIMPLES (APENAS LOADER COM LETRAS) ===== */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: #030305;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.8s ease, visibility 0.8s;
+    }
+    #preloader.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .loader-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 180px;
+      height: 180px;
+      font-family: "Inter", sans-serif;
+      font-size: 1.2em;
+      font-weight: 300;
+      color: white;
+      border-radius: 50%;
+      background-color: transparent;
+      user-select: none;
+    }
+    .loader {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      background-color: transparent;
+      animation: loader-rotate 2s linear infinite;
+      z-index: 0;
+    }
+    @keyframes loader-rotate {
+      0% { transform: rotate(90deg); box-shadow: 0 10px 20px 0 #fff inset, 0 20px 30px 0 #ad5fff inset, 0 60px 60px 0 #471eec inset; }
+      50% { transform: rotate(270deg); box-shadow: 0 10px 20px 0 #fff inset, 0 20px 10px 0 #c1ff72 inset, 0 40px 60px 0 #311e80 inset; }
+      100% { transform: rotate(450deg); box-shadow: 0 10px 20px 0 #fff inset, 0 20px 30px 0 #ad5fff inset, 0 60px 60px 0 #471eec inset; }
+    }
+    .loader-letter {
+      display: inline-block;
+      opacity: 0.4;
+      transform: translateY(0);
+      animation: loader-letter-anim 2s infinite;
+      z-index: 1;
+      border-radius: 50ch;
+      border: none;
+      font-weight: 600;
+      background: linear-gradient(135deg, #fff, #C1FF72, #A074FF);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .loader-letter:nth-child(1) { animation-delay: 0s; }
+    .loader-letter:nth-child(2) { animation-delay: 0.1s; }
+    .loader-letter:nth-child(3) { animation-delay: 0.2s; }
+    .loader-letter:nth-child(4) { animation-delay: 0.3s; }
+    .loader-letter:nth-child(5) { animation-delay: 0.4s; }
+    .loader-letter:nth-child(6) { animation-delay: 0.5s; }
+    .loader-letter:nth-child(7) { animation-delay: 0.6s; }
+    .loader-letter:nth-child(8) { animation-delay: 0.7s; }
+    .loader-letter:nth-child(9) { animation-delay: 0.8s; }
+    .loader-letter:nth-child(10) { animation-delay: 0.9s; }
+    @keyframes loader-letter-anim {
+      0%, 100% { opacity: 0.4; transform: translateY(0); }
+      20% { opacity: 1; transform: scale(1.15); }
+      40% { opacity: 0.7; transform: translateY(0); }
+    }
+
+    /* Feedback */
+    .feedback-container {
+      display: flex;
+      width: 520px;
+      max-width: 99%;
+      background-color: #ffffff10;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 20px;
+      box-shadow: 0 0 30px rgba(0,0,0,0.2);
+      border: 1px solid rgba(255,255,255,0.08);
+      overflow: hidden;
+      margin: 2rem auto;
+    }
+    .feedback-left {
+      width: 60%;
+      padding: 2rem 1.5rem;
+    }
+    .feedback-right {
+      width: 40%;
+      background: radial-gradient(circle at 30% 20%, #A074FF40, #0A0A10);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .feedback-title {
+      color: white;
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+    .rating-stars {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 1.5rem;
+      justify-content: center;
+    }
+    .star {
+      font-size: 2rem;
+      color: #555;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .star.active { color: #FFD700; }
+    .feedback-input {
+      background: rgba(20,20,30,0.7);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 12px 16px;
+      width: 100%;
+      color: white;
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+      resize: vertical;
+    }
+    .feedback-input:focus { outline: none; border-color: #9061EE; }
+    .feedback-btn {
+      background: linear-gradient(135deg, #9061EE, #603EFF);
+      border: none;
+      border-radius: 40px;
+      padding: 12px 24px;
+      color: white;
+      font-weight: 700;
+      width: 100%;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(144,97,238,0.4);
+    }
+    .feedback-btn:hover { transform: scale(1.02); box-shadow: 0 6px 20px rgba(144,97,238,0.6); }
+    @media (max-width: 600px) {
+      .feedback-container { flex-direction: column; }
+      .feedback-left, .feedback-right { width: 100%; }
+      .feedback-right { min-height: 120px; }
+    }
+  </style>
+</head>
+<body oncontextmenu="return false;" onselectstart="return false;" ondragstart="return false;" class="bg-[#030305] text-gray-200 antialiased">
+
+<!-- TELA DE CARREGAMENTO (APENAS LOADER COM LETRAS) -->
+<div id="preloader">
+  <div class="loader-wrapper">
+    <div class="loader"></div>
+    <span class="loader-letter">T</span>
+    <span class="loader-letter">E</span>
+    <span class="loader-letter">C</span>
+    <span class="loader-letter">H</span>
+    <span class="loader-letter">I</span>
+    <span class="loader-letter">F</span>
+    <span class="loader-letter">Y</span>
+    <span class="loader-letter">.</span>
+    <span class="loader-letter">M</span>
+    <span class="loader-letter">A</span>
+    <span class="loader-letter">X</span>
+  </div>
+</div>
+
+<div id="mouse-glow"></div>
+<canvas id="bg-canvas"></canvas>
+
+<!-- Sticky Navigation -->
+<header class="sticky top-0 z-50 px-4 py-3">
+  <div class="max-w-7xl mx-auto">
+    <div class="glass-nav rounded-2xl px-6 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-500 to-emerald-400 shadow-lg shadow-purple-500/30 flex items-center justify-center">
+          <span class="text-white font-bold text-xl">T</span>
+        </div>
+        <span class="ml-2 font-bold text-2xl tracking-tight">
+          <span class="techify-logo">Techify.Max</span>
+        </span>
+        <span class="techify-badge text-xs text-purple-200 ml-2 hidden sm:inline-block">WEB DESIGN</span>
+      </div>
+      <nav class="hidden md:flex items-center gap-8 text-sm font-medium">
+        <a href="#cases" class="text-gray-300 hover:text-white transition">Cases</a>
+        <a href="#sobre" class="text-gray-300 hover:text-white transition">Sobre</a>
+        <a href="#depoimentos" class="text-gray-300 hover:text-white transition">Depoimentos</a>
+        <a href="#faq" class="text-gray-300 hover:text-white transition">FAQ</a>
+        <a href="#feedback" class="text-gray-300 hover:text-white transition">Feedback</a>
+      </nav>
+      <div class="flex items-center gap-3">
+        <a href="https://wa.me/5581995498590?text=Olá%2C%20vim%20do%20site%20e%20gostaria%20de%20mais%20informações" target="_blank" class="btn-17 btn-17-sm">
+          <span class="text-container"><span class="text">Contato <i class="fab fa-whatsapp ml-1"></i></span></span>
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- Hero Section -->
+  <section class="relative overflow-hidden bg-gradient-hero pt-20 pb-20 md:pt-28 md:pb-28 jornal-section">
+    <div class="blob" style="top: 10%; left: 10%;"></div>
+    <div class="blob" style="bottom: 10%; right: 10%; animation-delay: 4s;"></div>
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+      <div class="hero-orb" style="top: -150px; right: -100px;"></div>
+      <div class="hero-orb" style="bottom: -200px; left: -50px; background: radial-gradient(circle, #CEFF6620 0%, transparent 70%);"></div>
+      <div class="absolute -top-40 -right-40 w-[700px] h-[700px] bg-purple-600/15 rounded-full blur-[130px]"></div>
+      <div class="absolute -bottom-20 -left-20 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[120px]"></div>
+    </div>
+    <div class="relative max-w-7xl mx-auto px-6">
+      <div class="text-center max-w-4xl mx-auto">
+        <span class="inline-block text-xs font-semibold tracking-wider text-purple-300 uppercase bg-purple-900/30 px-3 py-1 rounded-full border border-purple-500/20 mb-4 fade-up">Webdesigner premium</span>
+        <h1 class="text-4xl md:text-6xl font-bold leading-tight text-white fade-up">
+          Um design <span class="relative inline-block"><span class="text-gradient">premium</span></span><br/>para quem busca exclusividade
+        </h1>
+        <p class="text-lg text-gray-300 mt-6 max-w-2xl mx-auto fade-up">
+          Websites de alto padrão para empresários que vão se diferenciar dos demais.
+        </p>
+        <div class="mt-8 flex justify-center fade-up">
+          <a href="https://wa.me/5581995498590?text=Olá%2C%20vim%20do%20site%20e%20gostaria%20de%20mais%20informações" target="_blank" class="btn-17 text-lg">
+            <span class="text-container"><span class="text"><i class="fab fa-whatsapp mr-2"></i>Solicitar orçamento</span></span>
+          </a>
+        </div>
+        <div class="mt-16 animate-bounce opacity-60 fade-up">
+          <i class="fas fa-chevron-down text-white/40 text-xl"></i>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Seção "Se for ter um site" -->
+  <section class="py-16 px-6 max-w-7xl mx-auto relative jornal-section">
+    <div class="text-center">
+      <p class="text-4xl md:text-6xl font-bold max-w-5xl mx-auto leading-tight fade-up">
+        <span class="selecionado" style="--bg-position: 0%;">Se for ter um site, que ele seja inovador</span>
+      </p>
+      <div class="mt-8 flex justify-center">
+        <img src="https://dieselwebp.com/wp-content/uploads/2026/02/Group-1-12.png" alt="Techify.Max" class="h-12 opacity-80 blur ativo">
+      </div>
+    </div>
+  </section>
+
+  <!-- Cases de sucesso -->
+  <section id="cases" class="py-16 max-w-7xl mx-auto px-6 jornal-section">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl md:text-4xl font-bold text-white fade-up">Cases de <span class="text-gradient">sucesso</span></h2>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="glass-card tilt-card glow-hover rounded-2xl p-6 blur ativo" data-tilt>
+        <div class="flex items-center gap-4"><img src="https://dieselwebp.com/wp-content/uploads/2026/02/IMg-47.png" alt="Deive Leonardo" class="w-16 h-16 rounded-full object-cover border-2 border-purple-500/30"><div><h3 class="font-bold text-xl text-white">Deive Leonardo</h3><p class="text-gray-400 text-sm">@deiveleonardo</p></div></div><hr class="my-4 border-white/10"><div class="flex items-center gap-2 text-emerald-300"><i class="fas fa-check-circle text-lg"></i><span>16,6M seguidores</span></div>
+      </div>
+      <div class="glass-card tilt-card glow-hover rounded-2xl p-6 blur ativo" data-tilt>
+        <div class="flex items-center gap-4"><img src="https://dieselwebp.com/wp-content/uploads/2026/02/IMg-46.png" alt="Gabriel Ganley" class="w-16 h-16 rounded-full object-cover border-2 border-purple-500/30"><div><h3 class="font-bold text-xl text-white">Gabriel Ganley</h3><p class="text-gray-400 text-sm">@ganleygabriel</p></div></div><hr class="my-4 border-white/10"><div class="flex items-center gap-2 text-emerald-300"><i class="fas fa-check-circle text-lg"></i><span>1,4M seguidores</span></div>
+      </div>
+      <div class="glass-card tilt-card glow-hover rounded-2xl p-6 blur ativo" data-tilt>
+        <div class="flex items-center gap-4"><img src="https://dieselwebp.com/wp-content/uploads/2026/02/IMg-48.png" alt="Karina Bacchi" class="w-16 h-16 rounded-full object-cover border-2 border-purple-500/30"><div><h3 class="font-bold text-xl text-white">Karina Bacchi</h3><p class="text-gray-400 text-sm">@karinabacchi</p></div></div><hr class="my-4 border-white/10"><div class="flex items-center gap-2 text-emerald-300"><i class="fas fa-check-circle text-lg"></i><span>9,5M seguidores</span></div>
+      </div>
+      <div class="glass-card tilt-card glow-hover rounded-2xl p-6 blur ativo" data-tilt>
+        <div class="flex items-center gap-4"><img src="https://dieselwebp.com/wp-content/uploads/2026/02/IMg-45.png" alt="Daniel Scott" class="w-16 h-16 rounded-full object-cover border-2 border-purple-500/30"><div><h3 class="font-bold text-xl text-white">Daniel Scott</h3><p class="text-gray-400 text-sm">@odanielscott</p></div></div><hr class="my-4 border-white/10"><div class="flex items-center gap-2 text-emerald-300"><i class="fas fa-check-circle text-lg"></i><span>196K seguidores</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Conheça seu webdesigner -->
+  <section id="sobre" class="py-16 max-w-7xl mx-auto px-6 jornal-section">
+    <div class="text-center mb-10"><h2 class="text-3xl md:text-4xl font-bold text-white fade-up">Conheça seu <span class="text-gradient">webdesigner</span></h2></div>
+    <div class="flex flex-col items-center text-center max-w-3xl mx-auto">
+      <div class="space-y-4 text-gray-300 text-lg fade-up">
+        <p>Prazer, me chamo <strong class="chromatic">Marcos Henrique</strong>. Tenho 19 anos e empreendo desde os 16, tudo começou vendendo brigadeiro na escola e nesse processo cheguei à criação de websites.</p>
+        <p>Hoje atuo como Webdesigner, desenvolvendo <span class="text-gradient font-semibold">experiências</span> digitais que unem estética sofisticada e estratégia com foco em conversão.</p>
+        <p class="font-bold text-white">Não crio apenas sites, crio presença, posicionamento e autoridade!</p>
+      </div>
+      <div class="mt-8 fade-up"><a href="https://wa.me/5581995498590?text=Olá%2C%20vim%20do%20site%20e%20gostaria%20de%20mais%20informações" target="_blank" class="btn-17"><span class="text-container"><span class="text"><i class="fab fa-whatsapp mr-2"></i>Falar com Marcos</span></span></a></div>
+      <div class="mt-10 w-24 h-1 bg-gradient-to-r from-purple-500/50 to-emerald-400/50 rounded-full"></div>
+    </div>
+  </section>
+
+  <!-- Contadores + Projetos -->
+  <section class="py-16 bg-[#0A0A10] border-y border-white/5 jornal-section">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-10"><h2 class="text-2xl md:text-3xl font-bold text-white fade-up">Um pouco da minha jornada</h2></div>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
+        <div class="glass-card tilt-card glow-hover rounded-2xl p-6 blur ativo"><div class="text-5xl font-bold text-gradient">+100</div><div class="text-gray-300 mt-2">Projetos realizados</div></div>
+        <div class="glass-card tilt-card glow-hover rounded-2xl p-6 blur ativo"><div class="text-5xl font-bold text-gradient">+60</div><div class="text-gray-300 mt-2">Clientes satisfeitos</div></div>
+        <div class="glass-card tilt-card glow-hover rounded-2xl p-6 blur ativo"><div class="text-5xl font-bold text-gradient">+5</div><div class="text-gray-300 mt-2">Anos de experiência</div></div>
+      </div>
+      <div class="mt-16">
+        <h3 class="text-2xl font-bold text-white text-center mb-8 fade-up">Projetos pelo <span class="text-gradient">mundo</span></h3>
+        <div class="flex flex-wrap justify-center gap-8">
+          <div class="flex flex-col items-center blur ativo"><i class="fas fa-flag-usa text-4xl text-gray-200"></i><span class="text-xs mt-1 text-gray-400">EUA</span></div>
+          <div class="flex flex-col items-center blur ativo"><i class="fas fa-flag text-4xl text-gray-200"></i><span class="text-xs mt-1 text-gray-400">Brasil</span></div>
+          <div class="flex flex-col items-center blur ativo"><i class="fas fa-flag text-4xl text-gray-200"></i><span class="text-xs mt-1 text-gray-400">Portugal</span></div>
+          <div class="flex flex-col items-center blur ativo"><i class="fas fa-flag text-4xl text-gray-200"></i><span class="text-xs mt-1 text-gray-400">Canadá</span></div>
+          <div class="flex flex-col items-center blur ativo"><i class="fas fa-flag text-4xl text-gray-200"></i><span class="text-xs mt-1 text-gray-400">Japão</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Depoimentos -->
+  <section id="depoimentos" class="py-16 max-w-7xl mx-auto px-6 jornal-section">
+    <div class="text-center mb-10"><h2 class="text-3xl md:text-4xl font-bold text-white fade-up">O próximo depoimento será o <span class="text-gradient">seu!</span></h2></div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+      <div class="space-y-4">
+        <div class="glass-card tilt-card glow-hover rounded-2xl overflow-hidden blur ativo"><img src="https://dieselwebp.com/wp-content/uploads/2026/02/mentos.jpg" alt="Depoimento" class="w-full h-40 object-cover"></div>
+        <div class="glass-card tilt-card glow-hover rounded-2xl overflow-hidden blur ativo"><img src="https://dieselwebp.com/wp-content/uploads/2026/02/mentos-1.jpg" alt="Depoimento" class="w-full h-40 object-cover"></div>
+      </div>
+      <div class="space-y-4">
+        <div class="glass-card tilt-card glow-hover rounded-2xl overflow-hidden blur ativo"><img src="https://dieselwebp.com/wp-content/uploads/2026/02/Depoimento.jpg" alt="Depoimento" class="w-full h-40 object-cover"></div>
+        <div class="glass-card tilt-card glow-hover rounded-2xl p-4 blur ativo"><p class="text-gray-200 italic">"Uma apresentação boa aumenta o valor de seu serviço/produto!"</p></div>
+      </div>
+    </div>
+    <div class="mt-10 text-center fade-up">
+      <a href="https://wa.me/5581995498590?text=Olá%2C%20vim%20do%20site%20e%20gostaria%20de%20mais%20informações" target="_blank" class="btn-17"><span class="text-container"><span class="text"><i class="fab fa-whatsapp mr-2"></i>Quero meu site premium</span></span></a>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="py-16 max-w-7xl mx-auto px-6 jornal-section">
+    <div class="text-center mb-10"><h2 class="text-3xl font-bold text-white fade-up">FAQ</h2><p class="text-gradient text-lg">Perguntas Frequentes</p></div>
+    <div class="grid md:grid-cols-2 gap-8 faq">
+      <div class="space-y-2">
+        <details open class="border-b border-white/10 pb-4 fade-up"><summary class="flex justify-between items-center cursor-pointer text-white font-medium"><span>Qual o processo para começar?</span> <i class="fas fa-plus text-purple-400"></i></summary><p class="mt-3 text-gray-300 text-sm">Realizamos uma call rápida para entender o que deseja. Depois disso, envio um formulário personalizado para começarmos nosso projeto.</p></details>
+        <details class="border-b border-white/10 pb-4 fade-up"><summary class="flex justify-between items-center cursor-pointer text-white font-medium"><span>Em quanto tempo fica pronto?</span> <i class="fas fa-plus text-purple-400"></i></summary><p class="mt-3 text-gray-300 text-sm">O prazo fica conforme o seu projeto e, com isso, podemos combinar um prazo. A média seria de 7 a 15 dias. Caso você tenha uma urgência, podemos conversar também.</p></details>
+        <details class="border-b border-white/10 pb-4 fade-up"><summary class="flex justify-between items-center cursor-pointer text-white font-medium"><span>Vou conseguir editar o site depois?</span> <i class="fas fa-plus text-purple-400"></i></summary><p class="mt-3 text-gray-300 text-sm">Sim. Caso deseje, entrego o site preparado para que você possa alterar textos e imagens de forma simples. Também ofereço suporte caso prefira que eu faça as alterações.</p></details>
+      </div>
+      <div class="space-y-2">
+        <details class="border-b border-white/10 pb-4 fade-up"><summary class="flex justify-between items-center cursor-pointer text-white font-medium"><span>Você oferece suporte após a entrega?</span> <i class="fas fa-plus text-purple-400"></i></summary><p class="mt-3 text-gray-300 text-sm">Sim. Após a entrega, ofereço suporte para ajustes e orientações iniciais. Também há planos de manutenção contínua, caso deseje.</p></details>
+        <details class="border-b border-white/10 pb-4 fade-up"><summary class="flex justify-between items-center cursor-pointer text-white font-medium"><span>Quais os métodos de pagamento?</span> <i class="fas fa-plus text-purple-400"></i></summary><p class="mt-3 text-gray-300 text-sm">O método de pagamento pode ser PIX ou cartão de crédito, fica a sua preferência.</p></details>
+        <details class="border-b border-white/10 pb-4 fade-up"><summary class="flex justify-between items-center cursor-pointer text-white font-medium"><span>Realiza a assinatura de contrato?</span> <i class="fas fa-plus text-purple-400"></i></summary><p class="mt-3 text-gray-300 text-sm">Sim. É necessário para a segurança de ambos.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEEDBACK -->
+  <section id="feedback" class="py-16 max-w-7xl mx-auto px-6 jornal-section">
+    <div class="text-center mb-10"><h2 class="text-3xl md:text-4xl font-bold text-white fade-up">Deixe seu <span class="text-gradient">feedback</span></h2></div>
+    <div class="feedback-container fade-up">
+      <div class="feedback-left">
+        <h3 class="feedback-title">Sua opinião importa</h3>
+        <div class="rating-stars" id="ratingStars">
+          <i class="star fas fa-star" data-value="1"></i>
+          <i class="star fas fa-star" data-value="2"></i>
+          <i class="star fas fa-star" data-value="3"></i>
+          <i class="star fas fa-star" data-value="4"></i>
+          <i class="star fas fa-star" data-value="5"></i>
+        </div>
+        <textarea id="feedbackMessage" class="feedback-input" rows="3" placeholder="O que podemos melhorar?"></textarea>
+        <button class="feedback-btn" id="sendFeedback"><i class="fab fa-whatsapp mr-2"></i>Enviar feedback</button>
+      </div>
+      <div class="feedback-right">
+        <i class="fas fa-star text-6xl text-white/20"></i>
+      </div>
+    </div>
+  </section>
+
+  <!-- Faixa animada -->
+  <div class="textoanimado bg-[#0C0C12] border-y border-white/5 py-4 overflow-hidden">
+    <div class="textoanimado2 text-2xl font-bold whitespace-nowrap">
+      <span class="text-white mr-8">Posicionamento</span> <span class="text-purple-400 mr-8">•</span> 
+      <span class="text-white mr-8">Design</span> <span class="text-purple-400 mr-8">•</span> 
+      <span class="text-white mr-8">Sites</span> <span class="text-purple-400 mr-8">•</span> 
+      <span class="text-white mr-8">Presença</span> <span class="text-purple-400 mr-8">•</span> 
+      <span class="text-white mr-8">Exclusividade</span> <span class="text-purple-400 mr-8">•</span> 
+      <span class="text-white mr-8">Luxo</span> <span class="text-purple-400 mr-8">•</span> 
+      <span class="text-white mr-8">Techify.Max</span> <span class="text-purple-400 mr-8">•</span>
+      <span class="text-white mr-8">Posicionamento</span> <span class="text-purple-400 mr-8">•</span> 
+      <span class="text-white mr-8">Design</span> <span class="text-purple-400 mr-8">•</span> 
+      <span class="text-white mr-8">Sites</span> <span class="text-purple-400 mr-8">•</span> 
+      <span class="text-white mr-8">Presença</span> <span class="text-purple-400 mr-8">•</span> 
+      <span class="text-white mr-8">Exclusividade</span> <span class="text-purple-400 mr-8">•</span> 
+      <span class="text-white mr-8">Luxo</span> <span class="text-purple-400 mr-8">•</span>
+    </div>
+  </div>
+</main>
+
+<footer class="bg-[#050508] border-t border-white/5 py-12 px-6">
+  <div class="max-w-7xl mx-auto">
+    <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+      <div class="text-center md:text-left fade-up">
+        <h3 class="text-2xl font-bold techify-logo">Techify.Max</h3>
+        <p class="text-gray-400 text-lg mt-2">Seu site não precisa ser bonito. <br/>Precisa ser <span class="text-gradient font-semibold">inesquecível</span>.</p>
+      </div>
+      <div class="flex gap-4 fade-up">
+        <a href="https://instagram.com/rickzinxx_" target="_blank" class="btn-17 p-3 !rounded-full"><span class="text-container"><span class="text"><i class="fab fa-instagram text-xl"></i></span></span></a>
+        <a href="https://wa.me/5581995498590" target="_blank" class="btn-17 p-3 !rounded-full"><span class="text-container"><span class="text"><i class="fab fa-whatsapp text-xl"></i></span></span></a>
+      </div>
+    </div>
+    <div class="border-t border-white/10 mt-10 pt-6 text-center text-gray-500 text-sm">
+      <p>Copyright Marcos Henrique 2026 © Todos os direitos reservados</p>
+    </div>
+  </div>
+</footer>
+
+<script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+<script>
+  (function(){
+    "use strict";
+
+    // ----- PRELOADER: MAIS DEMORADO (4 segundos após load) -----
+    const preloader = document.getElementById('preloader');
+    
+    function hidePreloader() {
+      if (preloader) {
+        preloader.classList.add('hidden');
+      }
+    }
+
+    window.addEventListener('load', function() {
+      setTimeout(hidePreloader, 4000);
+    });
+
+    setTimeout(hidePreloader, 6000);
+
+    if (document.readyState === 'complete') {
+      setTimeout(hidePreloader, 4000);
+    }
+
+    // ----- FEEDBACK COM ESTRELAS -----
+    const stars = document.querySelectorAll('.star');
+    let rating = 0;
+    stars.forEach(star => {
+      star.addEventListener('click', function() {
+        rating = parseInt(this.dataset.value);
+        stars.forEach((s, idx) => {
+          if (idx < rating) s.classList.add('active');
+          else s.classList.remove('active');
+        });
+      });
+    });
+
+    const sendBtn = document.getElementById('sendFeedback');
+    if (sendBtn) {
+      sendBtn.addEventListener('click', function() {
+        const message = document.getElementById('feedbackMessage').value.trim();
+        if (!rating) { alert('Selecione uma avaliação com estrelas.'); return; }
+        const starsText = '★'.repeat(rating) + '☆'.repeat(5-rating);
+        const finalMsg = `*Feedback Techify.Max*\nAvaliação: ${starsText} (${rating}/5)\nOpinião: ${message || 'Sem comentários adicionais.'}`;
+        const whatsappUrl = `https://wa.me/558199130885?text=${encodeURIComponent(finalMsg)}`;
+        window.open(whatsappUrl, '_blank');
+      });
+    }
+
+    // ----- LENIS (SCROLL SUAVE E MAIS LENTO) -----
+    // Configuração: duração maior (2.5) e easing suave
+    const lenis = new Lenis({
+      duration: 2.5,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // easing exponencial suave
+      smooth: true,
+      smoothTouch: true,
+    });
+
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+
+    // ----- FAQ TOGGLE -----
+    document.querySelectorAll('.faq details').forEach(d => {
+      d.addEventListener('toggle', () => {
+        const icon = d.querySelector('summary i');
+        if (icon) {
+          icon.classList.toggle('fa-plus');
+          icon.classList.toggle('fa-minus');
+        }
+      });
+    });
+
+    // ----- SCROLL REVEAL + EFEITO JORNAL (ABAS SUBINDO) -----
+    gsap.registerPlugin(ScrollTrigger);
+    
+    const els = document.querySelectorAll('.blur, .scroll-left, .scroll-right, .scroll-top, .scroll-bottom');
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('ativo'); });
+    }, { threshold: 0.2 });
+    els.forEach(el => obs.observe(el));
+    window.addEventListener('load', () => els.forEach(el => { if(el.getBoundingClientRect().top < window.innerHeight) el.classList.add('ativo'); }));
+
+    const jornalSections = document.querySelectorAll('.jornal-section');
+    jornalSections.forEach(section => {
+      ScrollTrigger.create({
+        trigger: section,
+        start: "top 85%",
+        onEnter: () => section.classList.add('visible'),
+        once: true
+      });
+    });
+    
+    window.addEventListener('load', () => {
+      jornalSections.forEach(section => {
+        if (section.getBoundingClientRect().top < window.innerHeight * 0.85) {
+          section.classList.add('visible');
+        }
+      });
+    });
+
+    const selecionadoEl = document.querySelector('.selecionado');
+    if (selecionadoEl) {
+      gsap.to(selecionadoEl, {
+        "--bg-position": "100%",
+        ease: "none",
+        scrollTrigger: { 
+          trigger: selecionadoEl, 
+          start: "top bottom", 
+          end: "bottom center", 
+          scrub: 1.2 
+        }
+      });
+    }
+
+    // ----- CANVAS BACKGROUND (PARTÍCULAS) -----
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    let w, h;
+    let particles = [];
+    const COUNT = 80, CONNECT_DIST = 150;
+    let mouse = { x: null, y: null, radius: 120 };
+
+    function initParticles() {
+      particles = [];
+      for (let i=0; i<COUNT; i++) {
+        particles.push({
+          x: Math.random() * w, y: Math.random() * h,
+          vx: (Math.random()-0.5)*0.3, vy: (Math.random()-0.5)*0.3,
+          r: Math.random()*2.5+1.2
+        });
+      }
+    }
+    function resizeCanvas() { w = window.innerWidth; h = window.innerHeight; canvas.width = w; canvas.height = h; initParticles(); }
+    window.addEventListener('resize', resizeCanvas); resizeCanvas();
+    window.addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
+    window.addEventListener('mouseleave', () => { mouse.x = null; mouse.y = null; });
+    window.addEventListener('touchmove', (e) => { if(e.touches[0]) { mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; } }, {passive: true});
+    window.addEventListener('touchend', () => { mouse.x = null; mouse.y = null; });
+
+    function draw() {
+      if (!ctx) return;
+      ctx.clearRect(0,0,w,h);
+      for (let p of particles) {
+        if (mouse.x && mouse.y) {
+          let dx = p.x - mouse.x, dy = p.y - mouse.y, dist = Math.sqrt(dx*dx+dy*dy);
+          if (dist < mouse.radius) {
+            let force = (mouse.radius - dist) / mouse.radius * 0.8;
+            p.vx += (dx / dist) * force * 0.2;
+            p.vy += (dy / dist) * force * 0.2;
+          }
+        }
+        p.x += p.vx; p.y += p.vy;
+        if(p.x<0||p.x>w) p.vx*=-1; if(p.y<0||p.y>h) p.vy*=-1;
+        p.x = Math.min(w, Math.max(0, p.x)); p.y = Math.min(h, Math.max(0, p.y));
+        p.vx*=0.99; p.vy*=0.99;
+      }
+      ctx.strokeStyle = 'rgba(160,116,255,0.18)'; ctx.lineWidth=1.4;
+      for (let i=0; i<particles.length; i++) {
+        for (let j=i+1; j<particles.length; j++) {
+          const dx = particles[i].x - particles[j].x, dy = particles[i].y - particles[j].y, dist = Math.sqrt(dx*dx+dy*dy);
+          if (dist < CONNECT_DIST) {
+            ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(174,124,255, ${0.2 * (1 - dist/CONNECT_DIST)})`; ctx.stroke();
+          }
+        }
+      }
+      for (let p of particles) {
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+        ctx.fillStyle = '#B18AFF'; ctx.shadowColor = '#A074FF'; ctx.shadowBlur = 15; ctx.fill();
+      }
+      ctx.shadowBlur = 0; requestAnimationFrame(draw);
+    }
+    draw();
+
+    // ----- MOUSE GLOW -----
+    const glow = document.getElementById('mouse-glow');
+    document.addEventListener('mousemove', (e) => { if(glow) { glow.style.opacity = '1'; glow.style.left = e.clientX+'px'; glow.style.top = e.clientY+'px'; } });
+    document.addEventListener('mouseleave', () => { if(glow) glow.style.opacity = '0'; });
+
+    // ----- 3D TILT (apenas desktop) -----
+    if (window.matchMedia('(min-width: 769px)').matches) {
+      document.querySelectorAll('.tilt-card').forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left, y = e.clientY - rect.top;
+          const centerX = rect.width/2, centerY = rect.height/2;
+          const rotateY = ((x - centerX) / centerX) * 6;
+          const rotateX = ((y - centerY) / centerY) * -6;
+          card.style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(10px)`;
+        });
+        card.addEventListener('mouseleave', () => card.style.transform = 'perspective(1200px) rotateX(0deg) rotateY(0deg) translateZ(0)');
+      });
+    }
+
+    // ----- PROTEÇÕES -----
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I'||e.key==='J'||e.key==='C')) || (e.ctrlKey && e.key === 'U')) {
+        e.preventDefault(); return false;
+      }
+    });
+    document.querySelectorAll('img').forEach(i => i.setAttribute('draggable', 'false'));
+
+    // ----- SCROLL SUAVE PARA LINKS INTERNOS (com offset) -----
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        const href = this.getAttribute('href');
+        if (href === "#") return;
+        const target = document.querySelector(href);
+        if (target) {
+          e.preventDefault();
+          lenis.scrollTo(target, { offset: -80 });
+        }
+      });
+    });
+
+  })();
+</script>
+</body>
+</html>
