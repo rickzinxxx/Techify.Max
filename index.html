@@ -6,8 +6,6 @@
   <title>Techify.Max • Webdesigner premium</title>
   <meta name="description" content="Um design premium para quem busca exclusividade | Websites de alto padrão para empresários que vão se diferenciar.">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">
   
   <!-- Fonts & Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -256,7 +254,6 @@
     .btn-17 .text-container i { margin-right: 6px; }
     .btn-17-sm { padding: 0.5rem 1.5rem; font-size: 0.875rem; }
 
-    /* Animação flutuante na logo */
     .logo-float {
       animation: logoFloat 4s ease-in-out infinite;
     }
@@ -345,7 +342,7 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* ===== PRELOADER DO SITE (CIRCULAR COM LETRAS) ===== */
+    /* PRELOADER */
     #preloader {
       position: fixed;
       inset: 0;
@@ -373,8 +370,6 @@
       font-weight: 300;
       color: white;
       border-radius: 50%;
-      background-color: transparent;
-      user-select: none;
     }
     .loader {
       position: absolute;
@@ -383,7 +378,6 @@
       width: 100%;
       aspect-ratio: 1 / 1;
       border-radius: 50%;
-      background-color: transparent;
       animation: loader-rotate 2s linear infinite;
       z-index: 0;
     }
@@ -395,441 +389,65 @@
     .loader-letter {
       display: inline-block;
       opacity: 0.4;
-      transform: translateY(0);
       animation: loader-letter-anim 2s infinite;
-      z-index: 1;
-      border-radius: 50ch;
-      border: none;
       font-weight: 600;
       background: linear-gradient(135deg, #fff, #C1FF72, #A074FF);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
     }
-    .loader-letter:nth-child(1) { animation-delay: 0s; }
-    .loader-letter:nth-child(2) { animation-delay: 0.1s; }
-    .loader-letter:nth-child(3) { animation-delay: 0.2s; }
-    .loader-letter:nth-child(4) { animation-delay: 0.3s; }
-    .loader-letter:nth-child(5) { animation-delay: 0.4s; }
-    .loader-letter:nth-child(6) { animation-delay: 0.5s; }
-    .loader-letter:nth-child(7) { animation-delay: 0.6s; }
-    .loader-letter:nth-child(8) { animation-delay: 0.7s; }
-    .loader-letter:nth-child(9) { animation-delay: 0.8s; }
-    .loader-letter:nth-child(10) { animation-delay: 0.9s; }
     @keyframes loader-letter-anim {
       0%, 100% { opacity: 0.4; transform: translateY(0); }
       20% { opacity: 1; transform: scale(1.15); }
       40% { opacity: 0.7; transform: translateY(0); }
     }
 
-    /* Feedback */
-    .feedback-container {
-      display: flex;
-      width: 520px;
-      max-width: 99%;
-      background-color: #ffffff10;
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-radius: 20px;
-      box-shadow: 0 0 30px rgba(0,0,0,0.2);
-      border: 1px solid rgba(255,255,255,0.08);
-      overflow: hidden;
-      margin: 2rem auto;
-    }
-    .feedback-left {
-      width: 60%;
-      padding: 2rem 1.5rem;
-    }
-    .feedback-right {
-      width: 40%;
-      background: radial-gradient(circle at 30% 20%, #A074FF40, #0A0A10);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .feedback-title {
-      color: white;
-      font-size: 1.6rem;
-      font-weight: 700;
-      margin-bottom: 1.5rem;
-    }
-    .rating-stars {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 1.5rem;
-      justify-content: center;
-    }
-    .star {
-      font-size: 2rem;
-      color: #555;
-      cursor: pointer;
-      transition: color 0.2s;
-    }
-    .star.active { color: #FFD700; }
-    .feedback-input {
-      background: rgba(20,20,30,0.7);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 12px;
-      padding: 12px 16px;
-      width: 100%;
-      color: white;
-      font-size: 1rem;
-      margin-bottom: 1.5rem;
-      resize: vertical;
-    }
-    .feedback-input:focus { outline: none; border-color: #9061EE; }
-    .feedback-btn {
-      background: linear-gradient(135deg, #9061EE, #603EFF);
-      border: none;
-      border-radius: 40px;
-      padding: 12px 24px;
-      color: white;
-      font-weight: 700;
-      width: 100%;
-      cursor: pointer;
-      transition: all 0.3s;
-      box-shadow: 0 4px 15px rgba(144,97,238,0.4);
-    }
-    .feedback-btn:hover { transform: scale(1.02); box-shadow: 0 6px 20px rgba(144,97,238,0.6); }
-    @media (max-width: 600px) {
-      .feedback-container { flex-direction: column; }
-      .feedback-left, .feedback-right { width: 100%; }
-      .feedback-right { min-height: 120px; }
-    }
-
-    /* ===== LOGIN OVERLAY (TELA INICIAL) COM FUNDO ANIMADO ===== */
-    #loginOverlay {
+    /* Modal Planos */
+    .plans-modal {
+      display: none;
       position: fixed;
       inset: 0;
-      background: linear-gradient(-45deg, #0a0515, #120c1e, #1a1030, #0c0a1a);
-      background-size: 400% 400%;
-      animation: gradientBG 12s ease infinite;
-      z-index: 10000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: opacity 0.5s;
-    }
-    @keyframes gradientBG {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    .login-container {
-      width: 100%;
-      max-width: 450px;
-      padding: 20px;
-      animation: floatForm 6s ease-in-out infinite;
-    }
-    @keyframes floatForm {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
-    .form {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      background: rgba(20, 15, 35, 0.7);
+      background: rgba(3,3,5,0.95);
       backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      padding: 30px;
-      border-radius: 20px;
-      font-family: 'Inter', sans-serif;
-      border: 1px solid rgba(144,97,238,0.4);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 30px rgba(144,97,238,0.2);
+      z-index: 10000;
+      overflow-y: auto;
+      padding: 2rem 1rem;
     }
-    .flex-column > label {
-      color: white;
-      font-weight: 600;
+    .plans-modal.active {
+      display: block;
     }
-    .inputForm {
-      border: 1.5px solid rgba(144,97,238,0.4);
-      border-radius: 10em;
-      height: 50px;
+    .close-modal {
+      position: sticky;
+      top: 20px;
+      float: right;
+      background: rgba(255,255,255,0.1);
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
       display: flex;
       align-items: center;
-      padding-left: 15px;
-      background-color: rgba(20,20,30,0.5);
-      transition: all 0.3s ease;
-    }
-    .inputForm:hover {
-      border-color: #9061EE;
-      box-shadow: 0 0 15px rgba(144,97,238,0.3);
-    }
-    .input {
-      margin-left: 10px;
-      border-radius: 10rem;
-      border: none;
-      width: 100%;
-      height: 100%;
-      background: transparent;
-      color: white;
-    }
-    .input:focus { outline: none; }
-    .inputForm:focus-within {
-      border: 1.5px solid #C1FF72;
-      box-shadow: 0 0 20px #9061EE80;
-    }
-    .flex-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      justify-content: space-between;
-    }
-    .flex-row > div > label {
-      font-size: 14px;
-      color: #ccc;
-      font-weight: 400;
-    }
-    .span {
-      font-size: 14px;
-      margin-left: 5px;
-      color: #C1FF72;
-      font-weight: 500;
-      cursor: pointer;
-    }
-    .button-submit {
-      padding: 15px 30px;
-      background: transparent;
-      border: 2px solid #9061EE;
-      border-radius: 10em;
-      box-shadow: inset 0 0 0 0 #603EFF;
-      margin: 20px 0 10px 0;
-      color: white;
-      font-size: 15px;
-      font-weight: 500;
-      height: 50px;
-      width: 100%;
-      cursor: pointer;
-      transition: 0.5s;
-      position: relative;
-      overflow: hidden;
-    }
-    .button-submit:hover {
-      box-shadow: inset 0 -100px 0 0 #603EFF;
-    }
-    .p {
-      text-align: center;
-      color: #ccc;
-      font-size: 14px;
-      margin: 5px 0;
-    }
-    .btn {
-      margin-top: 10px;
-      width: 100%;
-      height: 50px;
-      border-radius: 10em;
-      display: flex;
       justify-content: center;
-      align-items: center;
-      font-weight: 500;
-      gap: 10px;
-      border: 1px solid #ededef;
-      background-color: white;
-      color: #000;
       cursor: pointer;
+      backdrop-filter: blur(8px);
       transition: 0.2s;
     }
-    .btn:hover {
-      border-color: #9061EE;
-      background-color: #f5f5f5;
+    .close-modal:hover { background: #9061EE; transform: scale(1.05); }
+    .plan-card {
+      background: rgba(20,20,32,0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(144,97,238,0.3);
+      border-radius: 28px;
+      transition: all 0.2s;
     }
-
-    /* ===== HAMSTER LOADER (UIVERSE) ===== */
-    .wheel-and-hamster {
-      --dur: 1s;
-      position: relative;
-      width: 12em;
-      height: 12em;
-      font-size: 14px;
-      margin: 0 auto;
+    .plan-card:hover {
+      border-color: #CEFF66;
+      transform: translateY(-6px);
+      box-shadow: 0 20px 35px -12px rgba(0,0,0,0.5);
     }
-    .wheel,
-    .hamster,
-    .hamster div,
-    .spoke {
-      position: absolute;
-    }
-    .wheel,
-    .spoke {
-      border-radius: 50%;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
-    .wheel {
-      background: radial-gradient(100% 100% at center,hsla(0,0%,60%,0) 47.8%,hsl(0,0%,60%) 48%);
-      z-index: 2;
-    }
-    .hamster {
-      animation: hamster var(--dur) ease-in-out infinite;
-      top: 50%;
-      left: calc(50% - 3.5em);
-      width: 7em;
-      height: 3.75em;
-      transform: rotate(4deg) translate(-0.8em,1.85em);
-      transform-origin: 50% 0;
-      z-index: 1;
-    }
-    .hamster__head {
-      animation: hamsterHead var(--dur) ease-in-out infinite;
-      background: hsl(30,90%,55%);
-      border-radius: 70% 30% 0 100% / 40% 25% 25% 60%;
-      box-shadow: 0 -0.25em 0 hsl(30,90%,80%) inset, 0.75em -1.55em 0 hsl(30,90%,90%) inset;
-      top: 0;
-      left: -2em;
-      width: 2.75em;
-      height: 2.5em;
-      transform-origin: 100% 50%;
-    }
-    .hamster__ear {
-      animation: hamsterEar var(--dur) ease-in-out infinite;
-      background: hsl(0,90%,85%);
-      border-radius: 50%;
-      box-shadow: -0.25em 0 hsl(30,90%,55%) inset;
-      top: -0.25em;
-      right: -0.25em;
-      width: 0.75em;
-      height: 0.75em;
-      transform-origin: 50% 75%;
-    }
-    .hamster__eye {
-      animation: hamsterEye var(--dur) linear infinite;
-      background-color: hsl(0,0%,0%);
-      border-radius: 50%;
-      top: 0.375em;
-      left: 1.25em;
-      width: 0.5em;
-      height: 0.5em;
-    }
-    .hamster__nose {
-      background: hsl(0,90%,75%);
-      border-radius: 35% 65% 85% 15% / 70% 50% 50% 30%;
-      top: 0.75em;
-      left: 0;
-      width: 0.2em;
-      height: 0.25em;
-    }
-    .hamster__body {
-      animation: hamsterBody var(--dur) ease-in-out infinite;
-      background: hsl(30,90%,90%);
-      border-radius: 50% 30% 50% 30% / 15% 60% 40% 40%;
-      box-shadow: 0.1em 0.75em 0 hsl(30,90%,55%) inset, 0.15em -0.5em 0 hsl(30,90%,80%) inset;
-      top: 0.25em;
-      left: 2em;
-      width: 4.5em;
-      height: 3em;
-      transform-origin: 17% 50%;
-      transform-style: preserve-3d;
-    }
-    .hamster__limb--fr,
-    .hamster__limb--fl {
-      clip-path: polygon(0 0,100% 0,70% 80%,60% 100%,0% 100%,40% 80%);
-      top: 2em;
-      left: 0.5em;
-      width: 1em;
-      height: 1.5em;
-      transform-origin: 50% 0;
-    }
-    .hamster__limb--fr {
-      animation: hamsterFRLimb var(--dur) linear infinite;
-      background: linear-gradient(hsl(30,90%,80%) 80%,hsl(0,90%,75%) 80%);
-      transform: rotate(15deg) translateZ(-1px);
-    }
-    .hamster__limb--fl {
-      animation: hamsterFLLimb var(--dur) linear infinite;
-      background: linear-gradient(hsl(30,90%,90%) 80%,hsl(0,90%,85%) 80%);
-      transform: rotate(15deg);
-    }
-    .hamster__limb--br,
-    .hamster__limb--bl {
-      border-radius: 0.75em 0.75em 0 0;
-      clip-path: polygon(0 0,100% 0,100% 30%,70% 90%,70% 100%,30% 100%,40% 90%,0% 30%);
-      top: 1em;
-      left: 2.8em;
-      width: 1.5em;
-      height: 2.5em;
-      transform-origin: 50% 30%;
-    }
-    .hamster__limb--br {
-      animation: hamsterBRLimb var(--dur) linear infinite;
-      background: linear-gradient(hsl(30,90%,80%) 90%,hsl(0,90%,75%) 90%);
-      transform: rotate(-25deg) translateZ(-1px);
-    }
-    .hamster__limb--bl {
-      animation: hamsterBLLimb var(--dur) linear infinite;
-      background: linear-gradient(hsl(30,90%,90%) 90%,hsl(0,90%,85%) 90%);
-      transform: rotate(-25deg);
-    }
-    .hamster__tail {
-      animation: hamsterTail var(--dur) linear infinite;
-      background: hsl(0,90%,85%);
-      border-radius: 0.25em 50% 50% 0.25em;
-      box-shadow: 0 -0.2em 0 hsl(0,90%,75%) inset;
-      top: 1.5em;
-      right: -0.5em;
-      width: 1em;
-      height: 0.5em;
-      transform: rotate(30deg) translateZ(-1px);
-      transform-origin: 0.25em 0.25em;
-    }
-    .spoke {
-      animation: spoke var(--dur) linear infinite;
-      background: radial-gradient(100% 100% at center,hsl(0,0%,60%) 4.8%,hsla(0,0%,60%,0) 5%),
-                  linear-gradient(hsla(0,0%,55%,0) 46.9%,hsl(0,0%,65%) 47% 52.9%,hsla(0,0%,65%,0) 53%) 50% 50% / 99% 99% no-repeat;
-    }
-    @keyframes hamster {
-      from, to { transform: rotate(4deg) translate(-0.8em,1.85em); }
-      50% { transform: rotate(0) translate(-0.8em,1.85em); }
-    }
-    @keyframes hamsterHead {
-      from, 25%, 50%, 75%, to { transform: rotate(0); }
-      12.5%, 37.5%, 62.5%, 87.5% { transform: rotate(8deg); }
-    }
-    @keyframes hamsterEye {
-      from, 90%, to { transform: scaleY(1); }
-      95% { transform: scaleY(0); }
-    }
-    @keyframes hamsterEar {
-      from, 25%, 50%, 75%, to { transform: rotate(0); }
-      12.5%, 37.5%, 62.5%, 87.5% { transform: rotate(12deg); }
-    }
-    @keyframes hamsterBody {
-      from, 25%, 50%, 75%, to { transform: rotate(0); }
-      12.5%, 37.5%, 62.5%, 87.5% { transform: rotate(-2deg); }
-    }
-    @keyframes hamsterFRLimb {
-      from, 25%, 50%, 75%, to { transform: rotate(50deg) translateZ(-1px); }
-      12.5%, 37.5%, 62.5%, 87.5% { transform: rotate(-30deg) translateZ(-1px); }
-    }
-    @keyframes hamsterFLLimb {
-      from, 25%, 50%, 75%, to { transform: rotate(-30deg); }
-      12.5%, 37.5%, 62.5%, 87.5% { transform: rotate(50deg); }
-    }
-    @keyframes hamsterBRLimb {
-      from, 25%, 50%, 75%, to { transform: rotate(-60deg) translateZ(-1px); }
-      12.5%, 37.5%, 62.5%, 87.5% { transform: rotate(20deg) translateZ(-1px); }
-    }
-    @keyframes hamsterBLLimb {
-      from, 25%, 50%, 75%, to { transform: rotate(20deg); }
-      12.5%, 37.5%, 62.5%, 87.5% { transform: rotate(-60deg); }
-    }
-    @keyframes hamsterTail {
-      from, 25%, 50%, 75%, to { transform: rotate(30deg) translateZ(-1px); }
-      12.5%, 37.5%, 62.5%, 87.5% { transform: rotate(10deg) translateZ(-1px); }
-    }
-    @keyframes spoke {
-      from { transform: rotate(0); }
-      to { transform: rotate(-1turn); }
-    }
-
-    /* Serviços glass rotacionado */
-    .services-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-wrap: wrap;
+    .badge-most {
+      background: linear-gradient(135deg, #9061EE, #CEFF66);
+      color: #030305;
+      font-weight: bold;
     }
     .service-card {
       position: relative;
@@ -847,14 +465,11 @@
       margin: 0 -45px;
       backdrop-filter: blur(10px);
       transform: rotate(calc(var(--r) * 1deg));
-      cursor: default;
     }
     .services-container:hover .service-card {
       transform: rotate(0deg);
       margin: 0 15px;
     }
-    .service-card i { font-size: 3rem; color: white; margin-bottom: 15px; }
-    .service-card span { color: white; font-weight: 600; }
     @media (max-width: 768px) {
       .service-card { margin: 10px !important; transform: rotate(0deg) !important; }
       .services-container { gap: 15px; }
@@ -863,39 +478,9 @@
 </head>
 <body oncontextmenu="return false;" onselectstart="return false;" ondragstart="return false;" class="bg-[#030305] text-gray-200 antialiased">
 
-<!-- LOGIN OVERLAY (TELA INICIAL COM FUNDO ANIMADO) -->
-<div id="loginOverlay">
-  <div class="login-container">
-    <div class="form" id="loginFormContainer">
-      <div class="flex-column"><label>Email</label></div>
-      <div class="inputForm">
-        <i class="fas fa-envelope" style="color: #9061EE;"></i>
-        <input type="email" class="input" placeholder="Digite seu email" id="loginEmail">
-      </div>
-      <div class="flex-column"><label>Senha</label></div>
-      <div class="inputForm">
-        <i class="fas fa-lock" style="color: #9061EE;"></i>
-        <input type="password" class="input" placeholder="Digite sua senha" id="loginPassword">
-      </div>
-      <div class="flex-row">
-        <div><input type="checkbox" id="remember"> <label for="remember">Lembrar de mim</label></div>
-        <span class="span">Esqueceu a senha?</span>
-      </div>
-      <button class="button-submit" id="loginBtn">Entrar</button>
-      <p class="p">Não tem uma conta? <span class="span">Cadastre-se</span></p>
-      <p class="p">Ou entre com</p>
-      <div class="flex-row">
-        <button class="btn"><i class="fab fa-google"></i> Google</button>
-        <button class="btn"><i class="fab fa-apple"></i> Apple</button>
-      </div>
-      <div id="loginStatus" style="min-height:30px; text-align:center;"></div>
-    </div>
-  </div>
-</div>
-
-<!-- SITE PRINCIPAL (INICIALMENTE OCULTO) -->
-<div id="mainSite" style="display: none;">
-  <!-- PRELOADER DO SITE -->
+<!-- SITE PRINCIPAL - SEM LOGIN -->
+<div id="mainSite">
+  <!-- PRELOADER -->
   <div id="preloader">
     <div class="loader-wrapper">
       <div class="loader"></div>
@@ -926,11 +511,14 @@
           <a href="#servicos" class="text-gray-300 hover:text-white transition">Serviços</a>
           <a href="#cases" class="text-gray-300 hover:text-white transition">Cases</a>
           <a href="#sobre" class="text-gray-300 hover:text-white transition">Sobre</a>
+          <a href="#projetos" class="text-gray-300 hover:text-white transition">Projetos</a>
           <a href="#depoimentos" class="text-gray-300 hover:text-white transition">Depoimentos</a>
           <a href="#faq" class="text-gray-300 hover:text-white transition">FAQ</a>
-          <a href="#feedback" class="text-gray-300 hover:text-white transition">Feedback</a>
         </nav>
         <div class="flex items-center gap-3">
+          <button id="openPlansBtn" class="btn-17 btn-17-sm">
+            <span class="text-container"><span class="text"><i class="fas fa-crown mr-1"></i>Planos</span></span>
+          </button>
           <a href="https://wa.me/5581995498590?text=Olá%2C%20vim%20do%20site%20e%20gostaria%20de%20mais%20informações" target="_blank" class="btn-17 btn-17-sm">
             <span class="text-container"><span class="text">Contato <i class="fab fa-whatsapp ml-1"></i></span></span>
           </a>
@@ -959,7 +547,10 @@
           <p class="text-lg text-gray-300 mt-6 max-w-2xl mx-auto fade-up">
             Websites de alto padrão para empresários que vão se diferenciar dos demais.
           </p>
-          <div class="mt-8 flex justify-center fade-up">
+          <div class="mt-8 flex justify-center gap-4 fade-up">
+            <button id="openPlansBtnHero" class="btn-17 text-lg">
+              <span class="text-container"><span class="text"><i class="fas fa-rocket mr-2"></i>Ver Planos</span></span>
+            </button>
             <a href="https://wa.me/5581995498590?text=Olá%2C%20vim%20do%20site%20e%20gostaria%20de%20mais%20informações" target="_blank" class="btn-17 text-lg">
               <span class="text-container"><span class="text"><i class="fab fa-whatsapp mr-2"></i>Solicitar orçamento</span></span>
             </a>
@@ -977,7 +568,7 @@
         <h2 class="text-3xl md:text-4xl font-bold text-white fade-up">Nossos <span class="text-gradient">Serviços</span></h2>
         <p class="text-gray-400 mt-4">Soluções completas para sua presença digital</p>
       </div>
-      <div class="services-container">
+      <div class="services-container flex flex-wrap justify-center">
         <div class="service-card" style="--r:-10;"><i class="fas fa-paint-brush"></i><span>Design</span></div>
         <div class="service-card" style="--r:-5;"><i class="fas fa-code"></i><span>Criação de Sites</span></div>
         <div class="service-card" style="--r:0;"><i class="fas fa-hashtag"></i><span>Social Media</span></div>
@@ -998,14 +589,40 @@
       </div>
     </section>
 
-    <!-- Cases -->
+    <!-- Cases existentes -->
     <section id="cases" class="py-16 max-w-7xl mx-auto px-6 jornal-section">
       <div class="text-center mb-12"><h2 class="text-3xl md:text-4xl font-bold text-white fade-up">Cases de <span class="text-gradient">sucesso</span></h2></div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="glass-card tilt-card glow-hover rounded-2xl p-6 blur ativo" data-tilt><div class="flex items-center gap-4"><img src="https://dieselwebp.com/wp-content/uploads/2026/02/IMg-47.png" alt="Deive Leonardo" class="w-16 h-16 rounded-full object-cover border-2 border-purple-500/30"><div><h3 class="font-bold text-xl text-white">Deive Leonardo</h3><p class="text-gray-400 text-sm">@deiveleonardo</p></div></div><hr class="my-4 border-white/10"><div class="flex items-center gap-2 text-emerald-300"><i class="fas fa-check-circle text-lg"></i><span>16,6M seguidores</span></div></div>
-        <div class="glass-card tilt-card glow-hover rounded-2xl p-6 blur ativo" data-tilt><div class="flex items-center gap-4"><img src="https://dieselwebp.com/wp-content/uploads/2026/02/IMg-46.png" alt="Gabriel Ganley" class="w-16 h-16 rounded-full object-cover border-2 border-purple-500/30"><div><h3 class="font-bold text-xl text-white">Gabriel Ganley</h3><p class="text-gray-400 text-sm">@ganleygabriel</p></div></div><hr class="my-4 border-white/10"><div class="flex items-center gap-2 text-emerald-300"><i class="fas fa-check-circle text-lg"></i><span>1,4M seguidores</span></div></div>
-        <div class="glass-card tilt-card glow-hover rounded-2xl p-6 blur ativo" data-tilt><div class="flex items-center gap-4"><img src="https://dieselwebp.com/wp-content/uploads/2026/02/IMg-48.png" alt="Karina Bacchi" class="w-16 h-16 rounded-full object-cover border-2 border-purple-500/30"><div><h3 class="font-bold text-xl text-white">Karina Bacchi</h3><p class="text-gray-400 text-sm">@karinabacchi</p></div></div><hr class="my-4 border-white/10"><div class="flex items-center gap-2 text-emerald-300"><i class="fas fa-check-circle text-lg"></i><span>9,5M seguidores</span></div></div>
-        <div class="glass-card tilt-card glow-hover rounded-2xl p-6 blur ativo" data-tilt><div class="flex items-center gap-4"><img src="https://dieselwebp.com/wp-content/uploads/2026/02/IMg-45.png" alt="Daniel Scott" class="w-16 h-16 rounded-full object-cover border-2 border-purple-500/30"><div><h3 class="font-bold text-xl text-white">Daniel Scott</h3><p class="text-gray-400 text-sm">@odanielscott</p></div></div><hr class="my-4 border-white/10"><div class="flex items-center gap-2 text-emerald-300"><i class="fas fa-check-circle text-lg"></i><span>196K seguidores</span></div></div>
+        <div class="glass-card tilt-card glow-hover rounded-2xl p-6 blur ativo"><div class="flex items-center gap-4"><img src="https://dieselwebp.com/wp-content/uploads/2026/02/IMg-47.png" alt="Deive Leonardo" class="w-16 h-16 rounded-full object-cover border-2 border-purple-500/30"><div><h3 class="font-bold text-xl text-white">Deive Leonardo</h3><p class="text-gray-400 text-sm">@deiveleonardo</p></div></div><hr class="my-4 border-white/10"><div class="flex items-center gap-2 text-emerald-300"><i class="fas fa-check-circle text-lg"></i><span>16,6M seguidores</span></div></div>
+        <div class="glass-card tilt-card glow-hover rounded-2xl p-6 blur ativo"><div class="flex items-center gap-4"><img src="https://dieselwebp.com/wp-content/uploads/2026/02/IMg-46.png" alt="Gabriel Ganley" class="w-16 h-16 rounded-full object-cover border-2 border-purple-500/30"><div><h3 class="font-bold text-xl text-white">Gabriel Ganley</h3><p class="text-gray-400 text-sm">@ganleygabriel</p></div></div><hr class="my-4 border-white/10"><div class="flex items-center gap-2 text-emerald-300"><i class="fas fa-check-circle text-lg"></i><span>1,4M seguidores</span></div></div>
+        <div class="glass-card tilt-card glow-hover rounded-2xl p-6 blur ativo"><div class="flex items-center gap-4"><img src="https://dieselwebp.com/wp-content/uploads/2026/02/IMg-48.png" alt="Karina Bacchi" class="w-16 h-16 rounded-full object-cover border-2 border-purple-500/30"><div><h3 class="font-bold text-xl text-white">Karina Bacchi</h3><p class="text-gray-400 text-sm">@karinabacchi</p></div></div><hr class="my-4 border-white/10"><div class="flex items-center gap-2 text-emerald-300"><i class="fas fa-check-circle text-lg"></i><span>9,5M seguidores</span></div></div>
+        <div class="glass-card tilt-card glow-hover rounded-2xl p-6 blur ativo"><div class="flex items-center gap-4"><img src="https://dieselwebp.com/wp-content/uploads/2026/02/IMg-45.png" alt="Daniel Scott" class="w-16 h-16 rounded-full object-cover border-2 border-purple-500/30"><div><h3 class="font-bold text-xl text-white">Daniel Scott</h3><p class="text-gray-400 text-sm">@odanielscott</p></div></div><hr class="my-4 border-white/10"><div class="flex items-center gap-2 text-emerald-300"><i class="fas fa-check-circle text-lg"></i><span>196K seguidores</span></div></div>
+      </div>
+    </section>
+
+    <!-- NOVA SEÇÃO: MEUS PROJETOS -->
+    <section id="projetos" class="py-16 max-w-7xl mx-auto px-6 jornal-section">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-bold text-white fade-up">Meus <span class="text-gradient">Projetos</span></h2>
+        <p class="text-gray-400 mt-2">Sites entregues com performance e design exclusivo</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="glass-card rounded-2xl overflow-hidden group transition-all hover:scale-[1.02]">
+          <div class="h-48 bg-gradient-to-br from-purple-800/40 to-emerald-800/40 flex items-center justify-center relative"><i class="fas fa-store text-6xl text-white/70"></i><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffffff30'%3E%3Cpath d='M4 7h16v2H4V7zm0 4h16v2H4v-2zm0 4h10v2H4v-2z'/%3E%3C/svg%3E" class="absolute opacity-20 w-full h-full object-cover"></div>
+          <div class="p-5"><h3 class="text-xl font-bold text-white">Loja Comassetto</h3><p class="text-gray-300 text-sm mt-1">Moda masculina com design elegante e moderno.</p><a href="https://comassettomodahomem.com.br" target="_blank" class="inline-flex items-center gap-1 text-purple-300 mt-3 text-sm hover:text-purple-200 transition">Visitar site <i class="fas fa-arrow-right"></i></a></div>
+        </div>
+        <div class="glass-card rounded-2xl overflow-hidden group transition-all hover:scale-[1.02]">
+          <div class="h-48 bg-gradient-to-br from-blue-800/40 to-indigo-800/40 flex items-center justify-center"><i class="fas fa-building text-6xl text-white/70"></i></div>
+          <div class="p-5"><h3 class="text-xl font-bold text-white">Zona Sul Lançamentos</h3><p class="text-gray-300 text-sm mt-1">Sistema completo para gestão de imóveis e leads.</p><a href="https://zonasullancamentos.com.br" target="_blank" class="inline-flex items-center gap-1 text-purple-300 mt-3 text-sm">Visitar site <i class="fas fa-arrow-right"></i></a></div>
+        </div>
+        <div class="glass-card rounded-2xl overflow-hidden group transition-all hover:scale-[1.02]">
+          <div class="h-48 bg-gradient-to-br from-amber-800/40 to-orange-800/40 flex items-center justify-center"><i class="fas fa-hard-hat text-6xl text-white/70"></i></div>
+          <div class="p-5"><h3 class="text-xl font-bold text-white">Maurício Engenharia</h3><p class="text-gray-300 text-sm mt-1">+160% orçamentos com site institucional completo.</p><a href="https://mauricioengenharia.com.br" target="_blank" class="inline-flex items-center gap-1 text-purple-300 mt-3 text-sm">Visitar site <i class="fas fa-arrow-right"></i></a></div>
+        </div>
+        <div class="glass-card rounded-2xl overflow-hidden group transition-all hover:scale-[1.02]">
+          <div class="h-48 bg-gradient-to-br from-green-800/40 to-teal-800/40 flex items-center justify-center"><i class="fas fa-paw text-6xl text-white/70"></i></div>
+          <div class="p-5"><h3 class="text-xl font-bold text-white">Vet Fidelity</h3><p class="text-gray-300 text-sm mt-1">+240% agendamentos, clínica veterinária com foco em fidelização.</p><a href="https://vetfidelity.com.br" target="_blank" class="inline-flex items-center gap-1 text-purple-300 mt-3 text-sm">Visitar site <i class="fas fa-arrow-right"></i></a></div>
+        </div>
       </div>
     </section>
 
@@ -1032,16 +649,6 @@
           <div class="glass-card tilt-card glow-hover rounded-2xl p-6 blur ativo"><div class="text-5xl font-bold text-gradient">+60</div><div class="text-gray-300 mt-2">Clientes satisfeitos</div></div>
           <div class="glass-card tilt-card glow-hover rounded-2xl p-6 blur ativo"><div class="text-5xl font-bold text-gradient">+5</div><div class="text-gray-300 mt-2">Anos de experiência</div></div>
         </div>
-        <div class="mt-16">
-          <h3 class="text-2xl font-bold text-white text-center mb-8 fade-up">Projetos pelo <span class="text-gradient">mundo</span></h3>
-          <div class="flex flex-wrap justify-center gap-8">
-            <div class="flex flex-col items-center blur ativo"><i class="fas fa-flag-usa text-4xl text-gray-200"></i><span class="text-xs mt-1 text-gray-400">EUA</span></div>
-            <div class="flex flex-col items-center blur ativo"><i class="fas fa-flag text-4xl text-gray-200"></i><span class="text-xs mt-1 text-gray-400">Brasil</span></div>
-            <div class="flex flex-col items-center blur ativo"><i class="fas fa-flag text-4xl text-gray-200"></i><span class="text-xs mt-1 text-gray-400">Portugal</span></div>
-            <div class="flex flex-col items-center blur ativo"><i class="fas fa-flag text-4xl text-gray-200"></i><span class="text-xs mt-1 text-gray-400">Canadá</span></div>
-            <div class="flex flex-col items-center blur ativo"><i class="fas fa-flag text-4xl text-gray-200"></i><span class="text-xs mt-1 text-gray-400">Japão</span></div>
-          </div>
-        </div>
       </div>
     </section>
 
@@ -1052,7 +659,6 @@
         <div class="space-y-4"><div class="glass-card tilt-card glow-hover rounded-2xl overflow-hidden blur ativo"><img src="https://dieselwebp.com/wp-content/uploads/2026/02/mentos.jpg" alt="Depoimento" class="w-full h-40 object-cover"></div><div class="glass-card tilt-card glow-hover rounded-2xl overflow-hidden blur ativo"><img src="https://dieselwebp.com/wp-content/uploads/2026/02/mentos-1.jpg" alt="Depoimento" class="w-full h-40 object-cover"></div></div>
         <div class="space-y-4"><div class="glass-card tilt-card glow-hover rounded-2xl overflow-hidden blur ativo"><img src="https://dieselwebp.com/wp-content/uploads/2026/02/Depoimento.jpg" alt="Depoimento" class="w-full h-40 object-cover"></div><div class="glass-card tilt-card glow-hover rounded-2xl p-4 blur ativo"><p class="text-gray-200 italic">"Uma apresentação boa aumenta o valor de seu serviço/produto!"</p></div></div>
       </div>
-      <div class="mt-10 text-center fade-up"><a href="https://wa.me/5581995498590?text=Olá%2C%20vim%20do%20site%20e%20gostaria%20de%20mais%20informações" target="_blank" class="btn-17"><span class="text-container"><span class="text"><i class="fab fa-whatsapp mr-2"></i>Quero meu site premium</span></span></a></div>
     </section>
 
     <!-- FAQ -->
@@ -1060,35 +666,13 @@
       <div class="text-center mb-10"><h2 class="text-3xl font-bold text-white fade-up">FAQ</h2><p class="text-gradient text-lg">Perguntas Frequentes</p></div>
       <div class="grid md:grid-cols-2 gap-8 faq">
         <div class="space-y-2">
-          <details open class="border-b border-white/10 pb-4 fade-up"><summary class="flex justify-between items-center cursor-pointer text-white font-medium"><span>Qual o processo para começar?</span> <i class="fas fa-plus text-purple-400"></i></summary><p class="mt-3 text-gray-300 text-sm">Realizamos uma call rápida para entender o que deseja...</p></details>
-          <details class="border-b border-white/10 pb-4 fade-up"><summary class="flex justify-between items-center cursor-pointer text-white font-medium"><span>Em quanto tempo fica pronto?</span> <i class="fas fa-plus text-purple-400"></i></summary><p class="mt-3 text-gray-300 text-sm">O prazo fica conforme o seu projeto...</p></details>
-          <details class="border-b border-white/10 pb-4 fade-up"><summary class="flex justify-between items-center cursor-pointer text-white font-medium"><span>Vou conseguir editar o site depois?</span> <i class="fas fa-plus text-purple-400"></i></summary><p class="mt-3 text-gray-300 text-sm">Sim. Caso deseje, entrego o site preparado...</p></details>
+          <details open class="border-b border-white/10 pb-4"><summary class="flex justify-between items-center cursor-pointer text-white font-medium"><span>Qual o processo para começar?</span> <i class="fas fa-plus text-purple-400"></i></summary><p class="mt-3 text-gray-300 text-sm">Realizamos uma call rápida para entender o que deseja...</p></details>
+          <details class="border-b border-white/10 pb-4"><summary class="flex justify-between items-center cursor-pointer text-white font-medium"><span>Em quanto tempo fica pronto?</span> <i class="fas fa-plus text-purple-400"></i></summary><p class="mt-3 text-gray-300 text-sm">O prazo fica conforme o seu projeto...</p></details>
         </div>
         <div class="space-y-2">
-          <details class="border-b border-white/10 pb-4 fade-up"><summary class="flex justify-between items-center cursor-pointer text-white font-medium"><span>Você oferece suporte após a entrega?</span> <i class="fas fa-plus text-purple-400"></i></summary><p class="mt-3 text-gray-300 text-sm">Sim. Após a entrega, ofereço suporte para ajustes...</p></details>
-          <details class="border-b border-white/10 pb-4 fade-up"><summary class="flex justify-between items-center cursor-pointer text-white font-medium"><span>Quais os métodos de pagamento?</span> <i class="fas fa-plus text-purple-400"></i></summary><p class="mt-3 text-gray-300 text-sm">O método de pagamento pode ser PIX ou cartão de crédito...</p></details>
-          <details class="border-b border-white/10 pb-4 fade-up"><summary class="flex justify-between items-center cursor-pointer text-white font-medium"><span>Realiza a assinatura de contrato?</span> <i class="fas fa-plus text-purple-400"></i></summary><p class="mt-3 text-gray-300 text-sm">Sim. É necessário para a segurança de ambos.</p></details>
+          <details class="border-b border-white/10 pb-4"><summary class="flex justify-between items-center cursor-pointer text-white font-medium"><span>Você oferece suporte após a entrega?</span> <i class="fas fa-plus text-purple-400"></i></summary><p class="mt-3 text-gray-300 text-sm">Sim. Após a entrega, ofereço suporte para ajustes...</p></details>
+          <details class="border-b border-white/10 pb-4"><summary class="flex justify-between items-center cursor-pointer text-white font-medium"><span>Quais os métodos de pagamento?</span> <i class="fas fa-plus text-purple-400"></i></summary><p class="mt-3 text-gray-300 text-sm">PIX ou cartão de crédito.</p></details>
         </div>
-      </div>
-    </section>
-
-    <!-- Feedback -->
-    <section id="feedback" class="py-16 max-w-7xl mx-auto px-6 jornal-section">
-      <div class="text-center mb-10"><h2 class="text-3xl md:text-4xl font-bold text-white fade-up">Deixe seu <span class="text-gradient">feedback</span></h2></div>
-      <div class="feedback-container fade-up">
-        <div class="feedback-left">
-          <h3 class="feedback-title">Sua opinião importa</h3>
-          <div class="rating-stars" id="ratingStars">
-            <i class="star fas fa-star" data-value="1"></i>
-            <i class="star fas fa-star" data-value="2"></i>
-            <i class="star fas fa-star" data-value="3"></i>
-            <i class="star fas fa-star" data-value="4"></i>
-            <i class="star fas fa-star" data-value="5"></i>
-          </div>
-          <textarea id="feedbackMessage" class="feedback-input" rows="3" placeholder="O que podemos melhorar?"></textarea>
-          <button class="feedback-btn" id="sendFeedback"><i class="fab fa-whatsapp mr-2"></i>Enviar feedback</button>
-        </div>
-        <div class="feedback-right"><i class="fas fa-star text-6xl text-white/20"></i></div>
       </div>
     </section>
 
@@ -1098,16 +682,8 @@
         <span class="text-white mr-8">Posicionamento</span> <span class="text-purple-400 mr-8">•</span> 
         <span class="text-white mr-8">Design</span> <span class="text-purple-400 mr-8">•</span> 
         <span class="text-white mr-8">Sites</span> <span class="text-purple-400 mr-8">•</span> 
-        <span class="text-white mr-8">Presença</span> <span class="text-purple-400 mr-8">•</span> 
         <span class="text-white mr-8">Exclusividade</span> <span class="text-purple-400 mr-8">•</span> 
-        <span class="text-white mr-8">Luxo</span> <span class="text-purple-400 mr-8">•</span> 
         <span class="text-white mr-8">Techify.Max</span> <span class="text-purple-400 mr-8">•</span>
-        <span class="text-white mr-8">Posicionamento</span> <span class="text-purple-400 mr-8">•</span> 
-        <span class="text-white mr-8">Design</span> <span class="text-purple-400 mr-8">•</span> 
-        <span class="text-white mr-8">Sites</span> <span class="text-purple-400 mr-8">•</span> 
-        <span class="text-white mr-8">Presença</span> <span class="text-purple-400 mr-8">•</span> 
-        <span class="text-white mr-8">Exclusividade</span> <span class="text-purple-400 mr-8">•</span> 
-        <span class="text-white mr-8">Luxo</span> <span class="text-purple-400 mr-8">•</span>
       </div>
     </div>
   </main>
@@ -1115,233 +691,131 @@
   <footer class="bg-[#050508] border-t border-white/5 py-12 px-6">
     <div class="max-w-7xl mx-auto">
       <div class="flex flex-col md:flex-row justify-between items-center gap-6">
-        <div class="text-center md:text-left fade-up">
-          <h3 class="text-2xl font-bold techify-logo">Techify.Max</h3>
-          <p class="text-gray-400 text-lg mt-2">Seu site não precisa ser bonito. <br/>Precisa ser <span class="text-gradient font-semibold">inesquecível</span>.</p>
-        </div>
-        <div class="flex gap-4 fade-up">
-          <a href="https://instagram.com/rickzinxx_" target="_blank" class="btn-17 p-3 !rounded-full"><span class="text-container"><span class="text"><i class="fab fa-instagram text-xl"></i></span></span></a>
-          <a href="https://wa.me/5581995498590" target="_blank" class="btn-17 p-3 !rounded-full"><span class="text-container"><span class="text"><i class="fab fa-whatsapp text-xl"></i></span></span></a>
-        </div>
+        <div class="text-center md:text-left"><h3 class="text-2xl font-bold techify-logo">Techify.Max</h3><p class="text-gray-400 text-lg mt-2">Seu site não precisa ser bonito. <br/>Precisa ser <span class="text-gradient font-semibold">inesquecível</span>.</p></div>
+        <div class="flex gap-4"><a href="https://instagram.com/rickzinxx_" target="_blank" class="btn-17 p-3 !rounded-full"><span class="text-container"><span class="text"><i class="fab fa-instagram text-xl"></i></span></span></a><a href="https://wa.me/5581995498590" target="_blank" class="btn-17 p-3 !rounded-full"><span class="text-container"><span class="text"><i class="fab fa-whatsapp text-xl"></i></span></span></a></div>
       </div>
-      <div class="border-t border-white/10 mt-10 pt-6 text-center text-gray-500 text-sm">
-        <p>Copyright Marcos Henrique 2026 © Todos os direitos reservados</p>
-      </div>
+      <div class="border-t border-white/10 mt-10 pt-6 text-center text-gray-500 text-sm"><p>Copyright Marcos Henrique 2026 © Todos os direitos reservados</p></div>
     </div>
   </footer>
+</div>
+
+<!-- MODAL EXCLUSIVA DE PLANOS -->
+<div id="plansModal" class="plans-modal">
+  <div class="max-w-7xl mx-auto relative">
+    <div class="close-modal" id="closeModalBtn"><i class="fas fa-times text-2xl text-white"></i></div>
+    <div class="text-center mb-10 pt-8"><h2 class="text-4xl md:text-5xl font-bold text-white">Planos <span class="text-gradient">Exclusivos</span></h2><p class="text-gray-300 mt-2">Escolha a solução ideal para o seu negócio</p></div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- Landing Page Simples -->
+      <div class="plan-card p-6"><div class="text-purple-300 text-4xl mb-3"><i class="fas fa-file-alt"></i></div><h3 class="text-2xl font-bold">Landing Page Simples</h3><p class="text-emerald-300 text-2xl font-bold mt-2">R$ 297</p><p class="text-gray-300 text-sm mt-2">Para captar leads rápido e vender no WhatsApp.</p><ul class="mt-4 space-y-2 text-sm text-gray-200"><li><i class="fas fa-check text-purple-400 mr-2"></i>Página focada em conversão (CTA direto)</li><li><i class="fas fa-check text-purple-400 mr-2"></i>Envio para WhatsApp com mensagem pronta</li><li><i class="fas fa-check text-purple-400 mr-2"></i>Hospedagem inclusa</li><li><i class="fas fa-check text-purple-400 mr-2"></i>Entrega em até 2 dias</li><li><i class="fas fa-check text-purple-400 mr-2"></i>Suporte 3 meses</li></ul><a href="https://wa.me/5581995498590?text=Quero%20Landing%20Page%20Simples" target="_blank" class="btn-17 w-full mt-5 text-center block">Quero essa Landing Page</a></div>
+      <!-- LP com Checkout + IA (Mais escolhido) -->
+      <div class="plan-card p-6 relative overflow-hidden"><div class="absolute top-4 right-4 badge-most text-xs px-3 py-1 rounded-full">Mais escolhido</div><div class="text-purple-300 text-4xl mb-3"><i class="fas fa-cart-shopping"></i></div><h3 class="text-2xl font-bold">LP com Checkout + IA</h3><p class="text-emerald-300 text-2xl font-bold mt-2">R$ 397</p><p class="text-gray-300 text-sm mt-2">Venda com checkout e automatize atendimento.</p><ul class="mt-4 space-y-2 text-sm text-gray-200"><li><i class="fas fa-check text-purple-400 mr-2"></i>Tudo do plano anterior</li><li><i class="fas fa-check text-purple-400 mr-2"></i>Checkout Mercado Pago integrado</li><li><i class="fas fa-check text-purple-400 mr-2"></i>Domínio incluso</li><li><i class="fas fa-check text-purple-400 mr-2"></i>Assistente IA integrado</li><li><i class="fas fa-check text-purple-400 mr-2"></i>Fluxo pronto para anúncios</li></ul><a href="https://wa.me/5581995498590?text=Quero%20LP%20Checkout%20%2B%20IA" target="_blank" class="btn-17 w-full mt-5 text-center block">Quero LP com Checkout + IA</a></div>
+      <!-- LP Profissional + IA + Painel ADM -->
+      <div class="plan-card p-6"><div class="text-purple-300 text-4xl mb-3"><i class="fas fa-chart-line"></i></div><h3 class="text-2xl font-bold">Profissional Completo</h3><p class="text-emerald-300 text-2xl font-bold mt-2">R$ 697</p><p class="text-gray-300 text-sm mt-2">Operação completa: vendas + dados + automação.</p><ul class="mt-4 space-y-2 text-sm text-gray-200"><li><i class="fas fa-check text-purple-400 mr-2"></i>Painel ADM configurado</li><li><i class="fas fa-check text-purple-400 mr-2"></i>Secretária virtual inteligente 24/7</li><li><i class="fas fa-check text-purple-400 mr-2"></i>SEO + Google Search Console</li><li><i class="fas fa-check text-purple-400 mr-2"></i>Google Analytics</li></ul><a href="https://wa.me/5581995498590?text=Quero%20Profissional%20Completo" target="_blank" class="btn-17 w-full mt-5 text-center block">Quero o Profissional</a></div>
+      <!-- Site Institucional -->
+      <div class="plan-card p-6"><i class="fas fa-building text-4xl text-purple-300"></i><h3 class="text-2xl font-bold mt-2">Site Institucional</h3><p class="text-emerald-300 text-2xl font-bold">R$ 1.397</p><p class="text-gray-300 text-sm">Até 7 páginas, painel ADM, domínio incluso, SEO otimizado.</p><a href="https://wa.me/5581995498590?text=Quero%20Site%20Institucional" class="btn-17 w-full mt-4 block text-center">Quero meu Site</a></div>
+      <!-- E-commerce Completo -->
+      <div class="plan-card p-6"><i class="fas fa-store text-4xl text-purple-300"></i><h3 class="text-2xl font-bold mt-2">E-commerce Completo</h3><p class="text-emerald-300 text-2xl font-bold">R$ 1.597</p><p class="text-gray-300 text-sm">Loja completa, checkout, painel ADM, SEO para produtos.</p><a href="https://wa.me/5581995498590?text=Quero%20E-commerce" class="btn-17 w-full mt-4 block text-center">Quero meu E-commerce</a></div>
+      <!-- E-commerce + IA -->
+      <div class="plan-card p-6"><i class="fas fa-microchip text-4xl text-purple-300"></i><h3 class="text-2xl font-bold mt-2">E-commerce + IA</h3><p class="text-emerald-300 text-2xl font-bold">R$ 1.797</p><p class="text-gray-300 text-sm">Com atendimento automático, coleta de leads e CRM.</p><a href="https://wa.me/5581995498590?text=Quero%20Ecommerce%2BIA" class="btn-17 w-full mt-4 block text-center">Quero E-commerce + IA</a></div>
+      <!-- Site com Sistema -->
+      <div class="plan-card p-6"><i class="fas fa-cogs text-4xl text-purple-300"></i><h3 class="text-2xl font-bold mt-2">Site com Sistema</h3><p class="text-emerald-300 text-2xl font-bold">R$ 1.897</p><p class="text-gray-300 text-sm">Sistema sob medida, painel administrativo, formulários.</p><a href="https://wa.me/5581995498590?text=Quero%20Sistema%20sem%20IA" class="btn-17 w-full mt-4 block text-center">Quero Sistema sem IA</a></div>
+      <!-- Sistema + IA + API -->
+      <div class="plan-card p-6"><i class="fas fa-brain text-4xl text-purple-300"></i><h3 class="text-2xl font-bold mt-2">Sistema + IA + API</h3><p class="text-emerald-300 text-2xl font-bold">R$ 2.497</p><p class="text-gray-300 text-sm">Projetos sob medida com integrações e automações.</p><a href="https://wa.me/5581995498590?text=Quero%20Sistema%20Sob%20Medida" class="btn-17 w-full mt-4 block text-center">Quero Sob Medida</a></div>
+    </div>
+  </div>
 </div>
 
 <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
 <script>
   (function(){
-    "use strict";
-
-    // ----- SEGURANÇA MÁXIMA -----
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'F12') { e.preventDefault(); return false; }
-      if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) { e.preventDefault(); return false; }
-      if ((e.ctrlKey || e.metaKey) && e.altKey && e.key === 'u') { e.preventDefault(); return false; }
-      if ((e.ctrlKey || e.metaKey) && e.key === 'u') { e.preventDefault(); return false; }
-      if (e.ctrlKey && e.shiftKey && e.key === 'J') { e.preventDefault(); return false; }
-      if (e.metaKey && e.altKey && e.key === 'j') { e.preventDefault(); return false; }
-      if (e.metaKey && e.altKey && e.key === 'c') { e.preventDefault(); return false; }
+    // Remove qualquer lógica de login e exibe site diretamente
+    const preloader = document.getElementById('preloader');
+    function hidePreloader() { if(preloader) preloader.classList.add('hidden'); }
+    window.addEventListener('load', () => setTimeout(hidePreloader, 2500));
+    setTimeout(hidePreloader, 3500);
+    
+    // Lenis scroll suave
+    const lenis = new Lenis({ duration: 2.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), smooth: true });
+    function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+    requestAnimationFrame(raf);
+    
+    // ScrollReveal + jornal
+    gsap.registerPlugin(ScrollTrigger);
+    const obs = new IntersectionObserver((entries) => { entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('ativo'); }); }, { threshold: 0.2 });
+    document.querySelectorAll('.blur, .scroll-left, .scroll-right, .scroll-top, .scroll-bottom').forEach(el => obs.observe(el));
+    document.querySelectorAll('.jornal-section').forEach(section => {
+      ScrollTrigger.create({ trigger: section, start: "top 85%", onEnter: () => section.classList.add('visible'), once: true });
     });
-    document.addEventListener('contextmenu', (e) => e.preventDefault());
-    document.addEventListener('selectstart', (e) => e.preventDefault());
+    const selecionadoEl = document.querySelector('.selecionado');
+    if(selecionadoEl) gsap.to(selecionadoEl, { "--bg-position": "100%", scrollTrigger: { trigger: selecionadoEl, start: "top bottom", end: "bottom center", scrub: 1.2 } });
     
-    // ----- LOGIN OVERLAY + HAMSTER LOADER -----
-    const loginOverlay = document.getElementById('loginOverlay');
-    const mainSite = document.getElementById('mainSite');
-    const loginFormContainer = document.getElementById('loginFormContainer');
-    const loginBtn = document.getElementById('loginBtn');
-    
-    function showHamsterLoaderAndProceed(email) {
-      loginFormContainer.innerHTML = `
-        <div style="text-align:center; padding:20px;">
-          <div class="wheel-and-hamster">
-            <div class="wheel"></div>
-            <div class="hamster">
-              <div class="hamster__body">
-                <div class="hamster__head">
-                  <div class="hamster__ear"></div>
-                  <div class="hamster__eye"></div>
-                  <div class="hamster__nose"></div>
-                </div>
-                <div class="hamster__limb--fr"></div>
-                <div class="hamster__limb--fl"></div>
-                <div class="hamster__limb--br"></div>
-                <div class="hamster__limb--bl"></div>
-                <div class="hamster__tail"></div>
-              </div>
-            </div>
-            <div class="spoke"></div>
-          </div>
-          <p style="color:white; margin-top:30px; font-size:1.2rem;">Iniciando o site...</p>
-        </div>
-      `;
-      
-      setTimeout(() => {
-        loginOverlay.style.opacity = '0';
-        setTimeout(() => {
-          loginOverlay.style.display = 'none';
-          mainSite.style.display = 'block';
-          initMainSite();
-        }, 500);
-      }, 2800);
-    }
-    
-    if (loginBtn) {
-      loginBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        const email = document.getElementById('loginEmail').value.trim();
-        const pass = document.getElementById('loginPassword').value;
-        if (!email || !pass) {
-          document.getElementById('loginStatus').innerHTML = '<p style="color:#ff8888;">Preencha todos os campos.</p>';
-          return;
-        }
-        showHamsterLoaderAndProceed(email);
-      });
-    }
-    
-    function initMainSite() {
-      // Preloader do site
-      const preloader = document.getElementById('preloader');
-      function hidePreloader() { if (preloader) preloader.classList.add('hidden'); }
-      window.addEventListener('load', () => setTimeout(hidePreloader, 4000));
-      setTimeout(hidePreloader, 6000);
-      if (document.readyState === 'complete') setTimeout(hidePreloader, 4000);
-
-      // Feedback estrelas
-      const stars = document.querySelectorAll('.star');
-      let rating = 0;
-      stars.forEach(star => {
-        star.addEventListener('click', function() {
-          rating = parseInt(this.dataset.value);
-          stars.forEach((s, idx) => {
-            if (idx < rating) s.classList.add('active');
-            else s.classList.remove('active');
-          });
-        });
-      });
-      document.getElementById('sendFeedback')?.addEventListener('click', function() {
-        const message = document.getElementById('feedbackMessage').value.trim();
-        if (!rating) { alert('Selecione uma avaliação com estrelas.'); return; }
-        const starsText = '★'.repeat(rating) + '☆'.repeat(5-rating);
-        const finalMsg = `*Feedback Techify.Max*\nAvaliação: ${starsText} (${rating}/5)\nOpinião: ${message || 'Sem comentários adicionais.'}`;
-        window.open(`https://wa.me/558199130885?text=${encodeURIComponent(finalMsg)}`, '_blank');
-      });
-
-      // Lenis scroll lento
-      const lenis = new Lenis({ duration: 2.5, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), smooth: true });
-      function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
-      requestAnimationFrame(raf);
-
-      // FAQ toggle
-      document.querySelectorAll('.faq details').forEach(d => {
-        d.addEventListener('toggle', () => {
-          const icon = d.querySelector('summary i');
-          if (icon) { icon.classList.toggle('fa-plus'); icon.classList.toggle('fa-minus'); }
-        });
-      });
-
-      // Scroll reveal + jornal
-      gsap.registerPlugin(ScrollTrigger);
-      const obs = new IntersectionObserver((entries) => {
-        entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('ativo'); });
-      }, { threshold: 0.2 });
-      document.querySelectorAll('.blur, .scroll-left, .scroll-right, .scroll-top, .scroll-bottom').forEach(el => obs.observe(el));
-      document.querySelectorAll('.jornal-section').forEach(section => {
-        ScrollTrigger.create({ trigger: section, start: "top 85%", onEnter: () => section.classList.add('visible'), once: true });
-      });
-      const selecionadoEl = document.querySelector('.selecionado');
-      if (selecionadoEl) {
-        gsap.to(selecionadoEl, { "--bg-position": "100%", ease: "none", scrollTrigger: { trigger: selecionadoEl, start: "top bottom", end: "bottom center", scrub: 1.2 } });
-      }
-
-      // Canvas partículas
-      const canvas = document.getElementById('bg-canvas');
+    // Canvas partículas
+    const canvas = document.getElementById('bg-canvas');
+    if(canvas){
       const ctx = canvas.getContext('2d');
       let w, h, particles = [];
       const COUNT = 80, CONNECT_DIST = 150;
       let mouse = { x: null, y: null, radius: 120 };
-      function initParticles() {
-        particles = [];
-        for (let i=0; i<COUNT; i++) {
-          particles.push({ x: Math.random() * w, y: Math.random() * h, vx: (Math.random()-0.5)*0.3, vy: (Math.random()-0.5)*0.3, r: Math.random()*2.5+1.2 });
-        }
-      }
-      function resizeCanvas() { w = window.innerWidth; h = window.innerHeight; canvas.width = w; canvas.height = h; initParticles(); }
+      function initParticles(){ particles = []; for(let i=0;i<COUNT;i++) particles.push({ x: Math.random() * w, y: Math.random() * h, vx: (Math.random()-0.5)*0.3, vy: (Math.random()-0.5)*0.3, r: Math.random()*2.5+1.2 }); }
+      function resizeCanvas(){ w = window.innerWidth; h = window.innerHeight; canvas.width = w; canvas.height = h; initParticles(); }
       window.addEventListener('resize', resizeCanvas); resizeCanvas();
       window.addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
-      function draw() {
-        if (!ctx) return;
+      function draw(){
+        if(!ctx) return;
         ctx.clearRect(0,0,w,h);
-        for (let p of particles) {
-          if (mouse.x && mouse.y) {
-            let dx = p.x - mouse.x, dy = p.y - mouse.y, dist = Math.sqrt(dx*dx+dy*dy);
-            if (dist < mouse.radius) {
-              let force = (mouse.radius - dist) / mouse.radius * 0.8;
-              p.vx += (dx / dist) * force * 0.2;
-              p.vy += (dy / dist) * force * 0.2;
-            }
-          }
+        for(let p of particles){
+          if(mouse.x && mouse.y){ let dx = p.x - mouse.x, dy = p.y - mouse.y, dist = Math.sqrt(dx*dx+dy*dy); if(dist < mouse.radius){ let force = (mouse.radius - dist) / mouse.radius * 0.8; p.vx += (dx / dist) * force * 0.2; p.vy += (dy / dist) * force * 0.2; } }
           p.x += p.vx; p.y += p.vy;
           if(p.x<0||p.x>w) p.vx*=-1; if(p.y<0||p.y>h) p.vy*=-1;
           p.x = Math.min(w, Math.max(0, p.x)); p.y = Math.min(h, Math.max(0, p.y));
           p.vx*=0.99; p.vy*=0.99;
         }
         ctx.strokeStyle = 'rgba(160,116,255,0.18)'; ctx.lineWidth=1.4;
-        for (let i=0; i<particles.length; i++) {
-          for (let j=i+1; j<particles.length; j++) {
-            const dx = particles[i].x - particles[j].x, dy = particles[i].y - particles[j].y, dist = Math.sqrt(dx*dx+dy*dy);
-            if (dist < CONNECT_DIST) {
-              ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y);
-              ctx.strokeStyle = `rgba(174,124,255, ${0.2 * (1 - dist/CONNECT_DIST)})`; ctx.stroke();
-            }
-          }
-        }
-        for (let p of particles) {
-          ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
-          ctx.fillStyle = '#B18AFF'; ctx.shadowColor = '#A074FF'; ctx.shadowBlur = 15; ctx.fill();
-        }
+        for(let i=0;i<particles.length;i++) for(let j=i+1;j<particles.length;j++){ const dx = particles[i].x - particles[j].x, dy = particles[i].y - particles[j].y, dist = Math.sqrt(dx*dx+dy*dy); if(dist < CONNECT_DIST){ ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y); ctx.strokeStyle = `rgba(174,124,255, ${0.2 * (1 - dist/CONNECT_DIST)})`; ctx.stroke(); } }
+        for(let p of particles){ ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fillStyle = '#B18AFF'; ctx.shadowColor = '#A074FF'; ctx.shadowBlur = 15; ctx.fill(); }
         ctx.shadowBlur = 0; requestAnimationFrame(draw);
       }
       draw();
-
-      // Mouse glow e tilt
-      const glow = document.getElementById('mouse-glow');
-      document.addEventListener('mousemove', (e) => { if(glow) { glow.style.opacity = '1'; glow.style.left = e.clientX+'px'; glow.style.top = e.clientY+'px'; } });
-      document.addEventListener('mouseleave', () => { if(glow) glow.style.opacity = '0'; });
-      if (window.matchMedia('(min-width: 769px)').matches) {
-        document.querySelectorAll('.tilt-card').forEach(card => {
-          card.addEventListener('mousemove', (e) => {
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left, y = e.clientY - rect.top;
-            const centerX = rect.width/2, centerY = rect.height/2;
-            const rotateY = ((x - centerX) / centerX) * 6;
-            const rotateX = ((y - centerY) / centerY) * -6;
-            card.style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(10px)`;
-          });
-          card.addEventListener('mouseleave', () => card.style.transform = 'perspective(1200px) rotateX(0deg) rotateY(0deg) translateZ(0)');
-        });
-      }
-
-      // Scroll suave links
-      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-          const href = this.getAttribute('href');
-          if (href === "#") return;
-          const target = document.querySelector(href);
-          if (target) { e.preventDefault(); lenis.scrollTo(target, { offset: -80 }); }
-        });
+    }
+    
+    // Mouse glow
+    const glow = document.getElementById('mouse-glow');
+    document.addEventListener('mousemove', (e) => { if(glow) { glow.style.opacity = '1'; glow.style.left = e.clientX+'px'; glow.style.top = e.clientY+'px'; } });
+    document.addEventListener('mouseleave', () => { if(glow) glow.style.opacity = '0'; });
+    
+    // Tilt cards
+    if(window.matchMedia('(min-width: 769px)').matches){
+      document.querySelectorAll('.tilt-card').forEach(card => {
+        card.addEventListener('mousemove', (e) => { const rect = card.getBoundingClientRect(); const x = e.clientX - rect.left, y = e.clientY - rect.top; const centerX = rect.width/2, centerY = rect.height/2; const rotateY = ((x - centerX) / centerX) * 6; const rotateX = ((y - centerY) / centerY) * -6; card.style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(10px)`; });
+        card.addEventListener('mouseleave', () => card.style.transform = 'perspective(1200px) rotateX(0deg) rotateY(0deg) translateZ(0)');
       });
     }
-
-    document.querySelectorAll('img').forEach(img => {
-      img.setAttribute('draggable', 'false');
-      img.addEventListener('dragstart', (e) => e.preventDefault());
+    
+    // Modal Planos
+    const modal = document.getElementById('plansModal');
+    const openBtns = [document.getElementById('openPlansBtn'), document.getElementById('openPlansBtnHero')];
+    const closeBtn = document.getElementById('closeModalBtn');
+    function openModal(){ modal.classList.add('active'); document.body.style.overflow = 'hidden'; }
+    function closeModal(){ modal.classList.remove('active'); document.body.style.overflow = ''; }
+    openBtns.forEach(btn => { if(btn) btn.addEventListener('click', openModal); });
+    if(closeBtn) closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => { if(e.target === modal) closeModal(); });
+    
+    // Smooth scroll para links internos
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e){
+        const href = this.getAttribute('href');
+        if(href === "#") return;
+        const target = document.querySelector(href);
+        if(target) { e.preventDefault(); lenis.scrollTo(target, { offset: -80 }); }
+      });
     });
     
+    // Bloquear arrastar imagens
+    document.querySelectorAll('img').forEach(img => { img.setAttribute('draggable', 'false'); img.addEventListener('dragstart', (e) => e.preventDefault()); });
+    
+    // Remover qualquer possível chamada de login residual
+    console.log("Site carregado sem login - planos e projetos adicionados");
   })();
 </script>
 </body>
