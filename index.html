@@ -18,16 +18,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
   
   <style>
-    /* ===== RESET & BOX-SIZING ===== */
-    *, *::before, *::after {
-      box-sizing: border-box;
-    }
-    html, body {
-      max-width: 100vw;
-      overflow-x: hidden;
-      margin: 0;
-      padding: 0;
-    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { max-width: 100vw; overflow-x: hidden; margin: 0; padding: 0; }
     body {
       font-family: 'Inter', sans-serif;
       background: radial-gradient(circle at 20% 30%, #6c2bff20, transparent 40%),
@@ -37,507 +29,297 @@
       -webkit-tap-highlight-color: transparent;
       position: relative;
     }
-    
-    /* ===== BACKGROUND PREMIUM ===== */
-    #bg-canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-      pointer-events: none;
-      opacity: 0.45;
+
+    /* ===== PRELOADER ===== */
+    #preloader {
+      position: fixed; inset: 0; background: #030305; z-index: 9999;
+      display: flex; align-items: center; justify-content: center;
+      transition: opacity 0.6s ease, visibility 0.6s ease;
     }
-    main, header, footer, section, .relative, .content-layer {
-      position: relative;
-      z-index: 3;
-      max-width: 100%;
+    #preloader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+    .loader-wrapper { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+    .loader {
+      width: 50px; height: 50px; border: 3px solid rgba(144,97,238,0.2);
+      border-top-color: #9061EE; border-radius: 50%;
+      animation: spin 1s linear infinite;
     }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loader-letters { display: flex; gap: 4px; }
+    .loader-letter {
+      color: #9061EE; font-size: 1.1rem; font-weight: 700;
+      animation: letterPop 1.5s ease-in-out infinite;
+    }
+    .loader-letter:nth-child(1){animation-delay:0s}
+    .loader-letter:nth-child(2){animation-delay:.1s}
+    .loader-letter:nth-child(3){animation-delay:.2s}
+    .loader-letter:nth-child(4){animation-delay:.3s}
+    .loader-letter:nth-child(5){animation-delay:.4s}
+    .loader-letter:nth-child(6){animation-delay:.5s}
+    .loader-letter:nth-child(7){animation-delay:.6s}
+    .loader-letter:nth-child(8){animation-delay:.7s}
+    .loader-letter:nth-child(9){animation-delay:.8s}
+    .loader-letter:nth-child(10){animation-delay:.9s}
+    .loader-letter:nth-child(11){animation-delay:1s}
+    @keyframes letterPop {
+      0%,100%{transform:translateY(0);opacity:.5}
+      50%{transform:translateY(-8px);opacity:1}
+    }
+
+    /* ===== BACKGROUND ===== */
+    #bg-canvas { position: fixed; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none; opacity:0.45; }
+    main, header, footer, section, .relative, .content-layer { position:relative; z-index:3; max-width:100%; }
     .bg-gradient-hero {
       background: radial-gradient(ellipse at 70% 30%, #603EFF20 0%, transparent 60%),
                   radial-gradient(ellipse at 20% 80%, #9061EE20 0%, transparent 60%),
                   #030305;
     }
-    
-    /* ===== HEADER & NAV ===== */
-    header {
-      width: 100%;
+
+    /* ===== MOUSE GLOW ===== */
+    #mouse-glow {
+      position: fixed; width: 400px; height: 400px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(144,97,238,0.12) 0%, transparent 70%);
+      pointer-events: none; z-index: 1; transform: translate(-50%,-50%);
+      transition: opacity 0.3s; opacity: 0;
     }
+
+    /* ===== BLOB ===== */
+    .blob {
+      position: absolute; width: 400px; height: 400px; border-radius: 50%;
+      background: radial-gradient(circle, #A074FF15 0%, transparent 70%);
+      filter: blur(60px); animation: blobFloat 8s ease-in-out infinite alternate;
+    }
+    @keyframes blobFloat {
+      0%{transform:translate(0,0) scale(1)}
+      100%{transform:translate(40px,-40px) scale(1.1)}
+    }
+
+    /* ===== HEADER & NAV ===== */
+    header { width: 100%; }
     .glass-nav {
-      background: rgba(10, 10, 15, 0.9);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(10,10,15,0.9);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
       width: 100%;
     }
     @supports (backdrop-filter: blur(20px)) {
-      .glass-nav {
-        background: rgba(10, 10, 15, 0.65);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-      }
+      .glass-nav { background: rgba(10,10,15,0.65); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
     }
-    
-    /* ===== CARDS E CONTAINERS ===== */
+
+    /* ===== CARDS ===== */
     .glass-card {
-      background: rgba(18, 18, 26, 0.8);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.4s, border-color 0.2s;
-      width: 100%;
-      max-width: 100%;
+      background: rgba(18,18,26,0.8);
+      border: 1px solid rgba(255,255,255,0.06);
+      transition: transform 0.3s cubic-bezier(0.23,1,0.32,1), box-shadow 0.4s, border-color 0.2s;
+      width: 100%; max-width: 100%;
     }
     @supports (backdrop-filter: blur(12px)) {
-      .glass-card {
-        background: rgba(18, 18, 26, 0.6);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-      }
+      .glass-card { background: rgba(18,18,26,0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
     }
-    
-    /* ===== TILT EFFECT ===== */
+
+    /* ===== TILT ===== */
     .tilt-card {
       transform-style: preserve-3d;
       transform: perspective(1000px) rotateX(0deg) rotateY(0deg);
       transition: transform 0.1s ease, box-shadow 0.3s;
       will-change: transform;
     }
-    .tilt-card.tilt-active {
-      box-shadow: 0 25px 40px -12px rgba(144, 97, 238, 0.25), 0 0 0 1px rgba(144, 97, 238, 0.2);
-    }
+    .tilt-card.tilt-active { box-shadow: 0 25px 40px -12px rgba(144,97,238,0.25), 0 0 0 1px rgba(144,97,238,0.2); }
     @media (hover: hover) {
-      .tilt-card:hover {
-        box-shadow: 0 25px 40px -12px rgba(144, 97, 238, 0.25), 0 0 0 1px rgba(144, 97, 238, 0.2);
-      }
+      .tilt-card:hover { box-shadow: 0 25px 40px -12px rgba(144,97,238,0.25), 0 0 0 1px rgba(144,97,238,0.2); }
     }
-    
+
     /* ===== TEXTOS GRADIENTES ===== */
     .text-gradient {
       background: linear-gradient(135deg, #CEFF66 0%, #9061EE 50%, #A074FF 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
+      -webkit-background-clip: text; background-clip: text; color: transparent;
     }
     .chromatic {
       background: linear-gradient(135deg, #C1FF72, #A074FF, #CEFF66);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      font-weight: 700;
+      -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 700;
     }
     .selecionado {
       background: linear-gradient(90deg, #9061EE 0%, #9061EE var(--bg-position, 0%), #ffffff var(--bg-position, 0%), #ffffff 100%);
-      background-clip: text;
-      -webkit-background-clip: text;
-      color: transparent;
+      background-clip: text; -webkit-background-clip: text; color: transparent;
       transition: --bg-position 0.1s linear;
     }
-    
-    /* Animações de entrada */
+
+    /* ===== ANIMAÇÕES ===== */
     .jornal-section {
-      opacity: 0;
-      transform: translateY(40px) rotateX(2deg);
+      opacity: 0; transform: translateY(40px) rotateX(2deg);
       transform-origin: center bottom;
-      transition: opacity 0.8s cubic-bezier(0.2, 0.9, 0.3, 1), transform 0.8s cubic-bezier(0.2, 0.9, 0.3, 1);
+      transition: opacity 0.8s cubic-bezier(0.2,0.9,0.3,1), transform 0.8s cubic-bezier(0.2,0.9,0.3,1);
       will-change: transform, opacity;
     }
-    .jornal-section.visible {
-      opacity: 1;
-      transform: translateY(0) rotateX(0);
-    }
-    
+    .jornal-section.visible { opacity: 1; transform: translateY(0) rotateX(0); }
     .blur, .scroll-left, .scroll-right, .scroll-top, .scroll-bottom {
-      opacity: 0;
-      transition: opacity 0.9s cubic-bezier(0.2, 0.9, 0.3, 1), transform 0.9s ease;
+      opacity: 0; transition: opacity 0.9s cubic-bezier(0.2,0.9,0.3,1), transform 0.9s ease;
     }
-    .blur.ativo, .scroll-left.ativo, .scroll-right.ativo, .scroll-top.ativo, .scroll-bottom.ativo {
-      opacity: 1;
-      transform: translate(0, 0);
-    }
-    .scroll-left { transform: translateX(-40px); }
-    .scroll-right { transform: translateX(40px); }
-    .scroll-top { transform: translateY(-40px); }
-    .scroll-bottom { transform: translateY(40px); }
-    .blur { transform: scale(0.96); filter: blur(6px); }
-    .blur.ativo { transform: scale(1); filter: blur(0); }
-    
+    .blur.ativo, .scroll-left.ativo, .scroll-right.ativo, .scroll-top.ativo, .scroll-bottom.ativo { opacity: 1; transform: translate(0,0); }
+    .scroll-left{transform:translateX(-40px)} .scroll-right{transform:translateX(40px)}
+    .scroll-top{transform:translateY(-40px)} .scroll-bottom{transform:translateY(40px)}
+    .blur{transform:scale(0.96);filter:blur(6px)} .blur.ativo{transform:scale(1);filter:blur(0)}
+
+    /* ===== FAIXA ANIMADA ===== */
     .textoanimado { overflow: hidden; white-space: nowrap; }
-    .textoanimado2 {
-      display: inline-block;
-      animation: scrollText 25s linear infinite;
-    }
-    @keyframes scrollText {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
-    }
-    
+    .textoanimado2 { display: inline-block; animation: scrollText 25s linear infinite; }
+    @keyframes scrollText { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+
     /* ===== FAQ ===== */
-    .faq details {
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      padding: 1.2rem 0;
-    }
-    .faq summary {
-      list-style: none;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: pointer;
-      font-weight: 500;
-      color: white;
-    }
+    .faq details { border-bottom: 1px solid rgba(255,255,255,0.08); padding: 1.2rem 0; }
+    .faq summary { list-style:none; display:flex; justify-content:space-between; align-items:center; cursor:pointer; font-weight:500; color:white; }
     .faq summary::-webkit-details-marker { display: none; }
     .faq summary i { transition: transform 0.3s; color: #9061EE; }
     .faq details[open] summary i { transform: rotate(45deg); }
-    
+
     /* ===== BOTÃO PREMIUM ===== */
-    .btn-17,
-    .btn-17 *,
-    .btn-17 :after,
-    .btn-17 :before,
-    .btn-17:after,
-    .btn-17:before {
-      border: 0 solid;
-      box-sizing: border-box;
-    }
+    .btn-17, .btn-17 *, .btn-17 :after, .btn-17 :before, .btn-17:after, .btn-17:before { border: 0 solid; box-sizing: border-box; }
     .btn-17 {
-      -webkit-tap-highlight-color: transparent;
-      background-color: #000;
-      background-image: none;
-      color: #fff;
-      cursor: pointer;
-      font-family: ui-sans-serif, system-ui, sans-serif;
-      font-size: 100%;
-      font-weight: 700;
-      line-height: 1.5;
-      margin: 0;
-      -webkit-mask-image: -webkit-radial-gradient(#000, #fff);
-      padding: 0;
-      text-transform: uppercase;
-      border-radius: 99rem;
-      border-width: 2px;
-      padding: 0.8rem 2rem;
-      z-index: 0;
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      border-color: rgba(144, 97, 238, 0.6);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      transition: 0.2s;
-      white-space: nowrap;
+      -webkit-tap-highlight-color: transparent; background-color: #000; background-image: none;
+      color: #fff; cursor: pointer; font-family: ui-sans-serif, system-ui, sans-serif;
+      font-size: 100%; font-weight: 700; line-height: 1.5; margin: 0;
+      -webkit-mask-image: -webkit-radial-gradient(#000, #fff); padding: 0;
+      text-transform: uppercase; border-radius: 99rem; border-width: 2px;
+      padding: 0.8rem 2rem; z-index: 0; position: relative; display: inline-flex;
+      align-items: center; justify-content: center; gap: 8px;
+      border-color: rgba(144,97,238,0.6); box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      transition: 0.2s; white-space: nowrap;
     }
     .btn-17 .text-container { display: block; mix-blend-mode: difference; overflow: hidden; position: relative; }
     .btn-17 .text { display: block; position: relative; }
     @media (hover: hover) {
-      .btn-17:hover .text {
-        animation: move-up-alternate 0.3s forwards;
-      }
+      .btn-17:hover .text { animation: move-up-alternate 0.3s forwards; }
       .btn-17:hover:before { --progress: 100%; }
       .btn-17:hover:after { --progress: -102%; }
     }
-    .btn-17:active .text {
-      animation: move-up-alternate 0.3s forwards;
-    }
+    .btn-17:active .text { animation: move-up-alternate 0.3s forwards; }
     .btn-17:active:before { --progress: 100%; }
     .btn-17:active:after { --progress: -102%; }
-    
     @keyframes move-up-alternate {
-      0% { transform: translateY(0); }
-      50% { transform: translateY(80%); }
-      51% { transform: translateY(-80%); }
-      to { transform: translateY(0); }
+      0%{transform:translateY(0)} 50%{transform:translateY(80%)} 51%{transform:translateY(-80%)} to{transform:translateY(0)}
     }
     .btn-17:after, .btn-17:before {
-      --skew: 0.2;
-      background: #fff;
-      content: "";
-      display: block;
-      height: 102%;
-      left: calc(-50% - 50% * var(--skew));
-      pointer-events: none;
-      position: absolute;
-      top: -104%;
-      transform: skew(calc(150deg * var(--skew))) translateY(var(--progress, 0));
-      transition: transform 0.2s ease;
-      width: 100%;
+      --skew: 0.2; background: #fff; content: ""; display: block; height: 102%;
+      left: calc(-50% - 50% * var(--skew)); pointer-events: none; position: absolute;
+      top: -104%; transform: skew(calc(150deg * var(--skew))) translateY(var(--progress, 0));
+      transition: transform 0.2s ease; width: 100%;
     }
-    .btn-17:after {
-      --progress: 0%;
-      left: calc(50% + 50% * var(--skew));
-      top: 102%;
-      z-index: -1;
-    }
+    .btn-17:after { --progress: 0%; left: calc(50% + 50% * var(--skew)); top: 102%; z-index: -1; }
     .btn-17-sm { padding: 0.5rem 1.2rem; font-size: 0.8rem; }
 
-    .logo-float {
-      animation: logoFloat 4s ease-in-out infinite;
-    }
-    @keyframes logoFloat {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-4px); }
-    }
+    /* ===== LOGO ===== */
+    .logo-float { animation: logoFloat 4s ease-in-out infinite; }
+    @keyframes logoFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
     .techify-logo {
-      font-weight: 700;
-      letter-spacing: -0.02em;
+      font-weight: 700; letter-spacing: -0.02em;
       background: linear-gradient(135deg, #fff 0%, #C1FF72 50%, #A074FF 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      font-size: 1.5rem;
+      -webkit-background-clip: text; background-clip: text; color: transparent; font-size: 1.5rem;
     }
-    @media (min-width: 768px) {
-      .techify-logo {
-        font-size: 1.7rem;
-      }
-    }
+    @media (min-width: 768px) { .techify-logo { font-size: 1.7rem; } }
     .techify-badge {
-      background: rgba(144,97,238,0.15);
-      border-radius: 40px;
-      padding: 0.2rem 0.7rem;
-      border: 1px solid rgba(144,97,238,0.3);
-      backdrop-filter: blur(8px);
-      font-size: 0.7rem;
+      background: rgba(144,97,238,0.15); border-radius: 40px; padding: 0.2rem 0.7rem;
+      border: 1px solid rgba(144,97,238,0.3); backdrop-filter: blur(8px); font-size: 0.7rem;
     }
-    
+
+    /* ===== HERO ORB ===== */
     .hero-orb {
-      position: absolute;
-      width: 600px;
-      height: 600px;
+      position: absolute; width: 600px; height: 600px;
       background: radial-gradient(circle, #A074FF30 0%, transparent 70%);
-      border-radius: 50%;
-      filter: blur(70px);
-      opacity: 0.5;
+      border-radius: 50%; filter: blur(70px); opacity: 0.5;
       animation: orbPulse 10s infinite alternate;
     }
     @keyframes orbPulse {
-      0% { transform: scale(1) translate(0,0); opacity: 0.4; }
-      100% { transform: scale(1.3) translate(30px, -30px); opacity: 0.7; }
-    }
-    #mouse-glow {
-      position: fixed;
-      width: 500px;
-      height: 500px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(144,97,238,0.12) 0%, transparent 70%);
-      pointer-events: none;
-      z-index: 2;
-      transform: translate(-50%, -50%);
-      opacity: 0;
-      mix-blend-mode: screen;
-      transition: opacity 0.2s;
-      will-change: left, top;
-    }
-    .blob {
-      position: absolute;
-      width: 500px;
-      height: 500px;
-      background: linear-gradient(135deg, #7b2cff, #a074ff, #c1ff72);
-      filter: blur(90px);
-      border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
-      animation: blobMove 12s ease-in-out infinite;
-      opacity: 0.5;
-      z-index: 1;
-    }
-    @keyframes blobMove {
-      0% { transform: translate(0, 0) scale(1); }
-      50% { transform: translate(60px, -40px) scale(1.2); }
-      100% { transform: translate(0, 0) scale(1); }
-    }
-    .glow-hover:hover {
-      box-shadow: 0 0 25px rgba(160, 116, 255, 0.6);
-      transform: translateY(-5px) scale(1.02);
-    }
-    .fade-up {
-      opacity: 0;
-      transform: translateY(40px);
-      animation: fadeUp 1s ease forwards;
-    }
-    @keyframes fadeUp {
-      to { opacity: 1; transform: translateY(0); }
+      0%{transform:scale(1) translate(0,0);opacity:0.4}
+      100%{transform:scale(1.3) translate(30px,-30px);opacity:0.7}
     }
 
-    /* Preloader */
-    #preloader {
-      position: fixed;
-      inset: 0;
-      background: #030305;
-      z-index: 9998;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: opacity 0.8s ease, visibility 0.8s;
-    }
-    #preloader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-    .loader-wrapper {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 160px;
-      height: 160px;
-      font-size: 1.1rem;
-    }
-    .loader {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      animation: loader-rotate 2s linear infinite;
-    }
-    @keyframes loader-rotate {
-      0% { transform: rotate(90deg); box-shadow: 0 10px 20px 0 #fff inset, 0 20px 30px 0 #ad5fff inset; }
-      100% { transform: rotate(450deg); box-shadow: 0 10px 20px 0 #fff inset, 0 20px 30px 0 #ad5fff inset; }
-    }
-    .loader-letter {
-      display: inline-block;
-      animation: loader-letter-anim 2s infinite;
-      background: linear-gradient(135deg, #fff, #C1FF72, #A074FF);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      font-weight: 600;
-    }
-    @keyframes loader-letter-anim {
-      0%, 100% { opacity: 0.4; transform: translateY(0); }
-      20% { opacity: 1; transform: scale(1.1); }
-    }
-
-    /* Modal Planos */
-    .plans-modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(3,3,5,0.96);
-      backdrop-filter: blur(20px);
-      z-index: 10000;
-      overflow-y: auto;
-      padding: 1rem;
-    }
-    .plans-modal.active { display: block; }
-    .close-modal {
-      position: sticky;
-      top: 10px;
-      float: right;
-      background: rgba(255,255,255,0.1);
-      border-radius: 50%;
-      width: 42px;
-      height: 42px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      backdrop-filter: blur(8px);
-    }
-    .plan-card {
-      background: rgba(20,20,32,0.8);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(144,97,238,0.3);
-      border-radius: 28px;
-      transition: 0.2s;
-    }
-    @media (hover: hover) {
-      .plan-card:hover { border-color: #CEFF66; transform: translateY(-4px); }
-    }
-    .plan-card:active { border-color: #CEFF66; transform: translateY(-4px); }
-    .badge-most { background: linear-gradient(135deg, #9061EE, #CEFF66); color: #030305; }
-
-    /* ===== CARDS DE SERVIÇOS - MOBILE 2 COLUNAS ===== */
+    /* ===== SERVICES CARDS ===== */
     .services-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1.5rem;
-      width: 100%;
-      max-width: 100%;
+      display: flex; flex-wrap: wrap; gap: 16px; justify-content: center;
     }
     .service-card {
-      position: relative;
-      width: 160px;
-      height: 180px;
-      background: linear-gradient(#fff2, transparent);
-      border: 1px solid rgba(255,255,255,0.1);
-      box-shadow: 0 25px 25px rgba(0,0,0,0.25);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      transition: 0.3s;
-      border-radius: 20px;
-      backdrop-filter: blur(10px);
-      cursor: default;
-      margin: 0;
-      transform: rotate(0deg);
-      flex-shrink: 0;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background: rgba(18,18,26,0.8); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px; padding: 20px 16px; cursor: pointer; min-width: 110px;
+      transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
     }
-    /* Desktop: efeito de leque */
-    @media (min-width: 769px) {
-      .service-card {
-        width: 180px;
-        height: 200px;
-        margin: 0 -30px;
-        transform: rotate(calc(var(--r) * 1deg));
-      }
-      .services-container:hover .service-card {
-        transform: rotate(0deg);
-        margin: 0 15px;
-      }
-    }
-    /* Mobile: GRID DE 2 COLUNAS */
-    @media (max-width: 768px) {
-      .services-container {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-        padding: 0 12px;
-      }
-      .service-card {
-        width: 100%;
-        height: 140px;
-        margin: 0;
-        border-radius: 16px;
-      }
-      .service-card i {
-        font-size: 1.8rem;
-        margin-bottom: 8px;
-      }
-      .service-card span {
-        font-size: 0.75rem;
-        padding: 0 4px;
-        line-height: 1.3;
-      }
-      .services-container.fan-out .service-card {
-        transform: scale(0.98);
-      }
-    }
-    .service-card .service-img {
-      width: 60px;
-      height: 60px;
-      object-fit: cover;
-      border-radius: 12px;
-      margin-bottom: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    }
-    @media (max-width: 768px) {
-      .service-card .service-img {
-        width: 50px;
-        height: 50px;
-        border-radius: 10px;
-      }
-    }
+    .service-card:hover { transform: translateY(-6px); border-color: rgba(144,97,238,0.4); box-shadow: 0 12px 30px rgba(144,97,238,0.15); }
+    .service-card .service-img { width: 60px; height: 60px; object-fit: cover; border-radius: 12px; margin-bottom: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
     .service-card span { color: white; font-weight: 600; font-size: 0.9rem; text-align: center; }
 
-    /* Feedback */
+    /* ===== HERO IMAGE MOCKUP ===== */
+    .hero-mockup {
+      position: relative; border-radius: 20px; overflow: hidden;
+      border: 1px solid rgba(144,97,238,0.2);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(144,97,238,0.1), inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+    .hero-mockup::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 32px;
+      background: rgba(10,10,20,0.9); z-index: 2; display: flex; align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .mockup-dots {
+      position: absolute; top: 10px; left: 14px; z-index: 3;
+      display: flex; gap: 6px;
+    }
+    .mockup-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+    /* ===== SOBRE SECTION ===== */
+    .sobre-img-wrapper {
+      position: relative; border-radius: 24px; overflow: hidden;
+      border: 2px solid rgba(144,97,238,0.3);
+      box-shadow: 0 20px 60px rgba(144,97,238,0.15), 0 0 0 1px rgba(144,97,238,0.1);
+    }
+    .sobre-img-wrapper::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(160,116,255,0.1) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    /* ===== STATS COUNTER ===== */
+    .stat-number { font-size: 3.5rem; font-weight: 800; line-height: 1; }
+
+    /* ===== PLANS MODAL ===== */
+    .plans-modal {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(20px); z-index: 1000; overflow-y: auto;
+      padding: 2rem 1rem; opacity: 0; visibility: hidden;
+      transition: opacity 0.3s, visibility 0.3s;
+    }
+    .plans-modal.active { opacity: 1; visibility: visible; }
+    .close-modal {
+      position: sticky; top: 0; float: right; width: 40px; height: 40px;
+      background: rgba(255,255,255,0.1); border-radius: 50%; display: flex;
+      align-items: center; justify-content: center; cursor: pointer; z-index: 10;
+      transition: background 0.2s;
+    }
+    .close-modal:hover { background: rgba(255,255,255,0.2); }
+    .plan-card {
+      background: rgba(18,18,26,0.9); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px; padding: 2rem; position: relative; overflow: hidden;
+      transition: transform 0.3s, border-color 0.3s;
+    }
+    .plan-card:hover { transform: translateY(-4px); border-color: rgba(144,97,238,0.4); }
+    .plan-card.featured { border-color: rgba(144,97,238,0.5); }
+    .plan-card.featured::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(144,97,238,0.05) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .plan-badge {
+      display: inline-block; background: linear-gradient(135deg, #9061EE, #A074FF);
+      color: white; font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.8rem;
+      border-radius: 99px; text-transform: uppercase; margin-bottom: 1rem;
+    }
+    .plan-price { font-size: 2.5rem; font-weight: 800; color: white; }
+    .plan-price span { font-size: 1rem; font-weight: 400; color: #9ca3af; }
+    .plan-feature { display: flex; align-items: center; gap: 8px; color: #d1d5db; font-size: 0.9rem; padding: 0.4rem 0; }
+    .plan-feature i { color: #9061EE; width: 16px; }
+
+    /* ===== FEEDBACK ===== */
     .feedback-container {
-      display: flex;
-      width: 100%;
-      max-width: 600px;
-      margin: 0 auto;
-      background: #ffffff10;
-      backdrop-filter: blur(20px);
-      border-radius: 20px;
-      border: 1px solid rgba(255,255,255,0.08);
-      overflow: hidden;
-      flex-wrap: wrap;
+      display: flex; width: 100%; max-width: 600px; margin: 0 auto;
+      background: #ffffff10; backdrop-filter: blur(20px);
+      border-radius: 20px; border: 1px solid rgba(255,255,255,0.08);
+      overflow: hidden; flex-wrap: wrap;
     }
     .feedback-left { flex: 2; padding: 1.5rem; }
     .feedback-right { flex: 1; background: radial-gradient(circle at 30% 20%, #A074FF40, #0A0A10); display: flex; align-items: center; justify-content: center; min-height: 120px; }
@@ -546,34 +328,14 @@
     .star.active { color: #FFD700; }
     .feedback-input { background: rgba(20,20,30,0.7); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 10px; width: 100%; color: white; margin-bottom: 1rem; }
 
-    /* Menu hambúrguer */
-    .hamburger {
-      display: none;
-      flex-direction: column;
-      cursor: pointer;
-      gap: 5px;
-    }
-    .hamburger span {
-      width: 25px;
-      height: 2px;
-      background: white;
-      transition: 0.3s;
-      border-radius: 2px;
-    }
+    /* ===== MOBILE NAV ===== */
+    .hamburger { display: none; flex-direction: column; cursor: pointer; gap: 5px; }
+    .hamburger span { width: 25px; height: 2px; background: white; transition: 0.3s; border-radius: 2px; }
     .mobile-nav {
-      position: fixed;
-      top: 0;
-      right: -100%;
-      width: 70%;
-      max-width: 280px;
-      height: 100vh;
-      background: rgba(10,10,20,0.95);
-      backdrop-filter: blur(24px);
-      z-index: 200;
-      padding: 5rem 2rem;
-      transition: 0.3s ease;
-      box-shadow: -5px 0 25px rgba(0,0,0,0.5);
-      border-left: 1px solid rgba(144,97,238,0.3);
+      position: fixed; top: 0; right: -100%; width: 70%; max-width: 280px;
+      height: 100vh; background: rgba(10,10,20,0.95); backdrop-filter: blur(24px);
+      z-index: 200; padding: 5rem 2rem; transition: 0.3s ease;
+      box-shadow: -5px 0 25px rgba(0,0,0,0.5); border-left: 1px solid rgba(144,97,238,0.3);
     }
     .mobile-nav.active { right: 0; }
     .mobile-nav a { display: block; color: #ddd; padding: 1rem 0; font-size: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
@@ -582,37 +344,68 @@
       .desktop-nav { display: none; }
       .hamburger { display: flex; }
       .techify-badge { display: none; }
-    }
-    @media (min-width: 769px) { .mobile-nav { display: none; } }
-    
-    /* Otimizações mobile */
-    @media (max-width: 768px) {
       .blob { opacity: 0.3; max-width: 100vw; }
       #mouse-glow { opacity: 0 !important; }
       .btn-17 { white-space: normal; }
     }
+    @media (min-width: 769px) { .mobile-nav { display: none; } }
 
-    /* Garantir que nenhum container ultrapasse a largura */
-    section, .max-w-7xl, .max-w-4xl, .max-w-5xl {
-      max-width: 100% !important;
-      padding-left: 1rem;
-      padding-right: 1rem;
+    /* ===== GLOW HOVER ===== */
+    .glow-hover { transition: box-shadow 0.3s; }
+    .glow-hover:hover { box-shadow: 0 0 30px rgba(144,97,238,0.15); }
+
+    /* ===== PROJETOS ===== */
+    .project-img-wrapper {
+      position: relative; overflow: hidden;
     }
-    .max-w-7xl {
-      max-width: 1280px !important;
-      margin-left: auto;
-      margin-right: auto;
+    .project-img-wrapper img {
+      transition: transform 0.5s cubic-bezier(0.23,1,0.32,1);
     }
-    img, video, iframe {
-      max-width: 100%;
-      height: auto;
+    .project-img-wrapper:hover img { transform: scale(1.05); }
+    .project-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(3,3,5,0.8) 0%, transparent 60%);
     }
+
+    /* ===== DEPOIMENTOS ===== */
+    .depo-img { transition: transform 0.3s; }
+    .depo-img:hover { transform: scale(1.02); }
+
+    /* ===== SECTION DIVIDER ===== */
+    .section-divider {
+      width: 60px; height: 3px; margin: 12px auto 0;
+      background: linear-gradient(90deg, #9061EE, #CEFF66);
+      border-radius: 99px;
+    }
+
+    /* ===== GARANTIA BADGE ===== */
+    .garantia-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(144,97,238,0.1); border: 1px solid rgba(144,97,238,0.3);
+      border-radius: 99px; padding: 0.5rem 1.2rem; font-size: 0.85rem; color: #c4b5fd;
+    }
+
+    section, .max-w-7xl, .max-w-4xl, .max-w-5xl { max-width: 100% !important; padding-left: 1rem; padding-right: 1rem; }
+    .max-w-7xl { max-width: 1280px !important; margin-left: auto; margin-right: auto; }
+    img, video, iframe { max-width: 100%; height: auto; }
   </style>
 </head>
 <body class="bg-[#030305] text-gray-200 antialiased">
 
 <div id="mainSite">
-  <div id="preloader"><div class="loader-wrapper"><div class="loader"></div><span class="loader-letter">T</span><span class="loader-letter">E</span><span class="loader-letter">C</span><span class="loader-letter">H</span><span class="loader-letter">I</span><span class="loader-letter">F</span><span class="loader-letter">Y</span><span class="loader-letter">.</span><span class="loader-letter">M</span><span class="loader-letter">A</span><span class="loader-letter">X</span></div></div>
+  <!-- Preloader -->
+  <div id="preloader">
+    <div class="loader-wrapper">
+      <div class="loader"></div>
+      <div class="loader-letters">
+        <span class="loader-letter">T</span><span class="loader-letter">E</span><span class="loader-letter">C</span>
+        <span class="loader-letter">H</span><span class="loader-letter">I</span><span class="loader-letter">F</span>
+        <span class="loader-letter">Y</span><span class="loader-letter">.</span><span class="loader-letter">M</span>
+        <span class="loader-letter">A</span><span class="loader-letter">X</span>
+      </div>
+    </div>
+  </div>
+
   <div id="mouse-glow"></div>
   <canvas id="bg-canvas"></canvas>
 
@@ -625,7 +418,12 @@
           <span class="techify-badge text-purple-200 hidden sm:inline-block">WEB DESIGN</span>
         </div>
         <nav class="desktop-nav hidden md:flex items-center gap-6 text-sm font-medium">
-          <a href="#servicos">Serviços</a><a href="#cases">Cases</a><a href="#sobre">Sobre</a><a href="#projetos">Projetos</a><a href="#depoimentos">Depoimentos</a><a href="#faq">FAQ</a>
+          <a href="#servicos" class="text-gray-300 hover:text-white transition-colors">Serviços</a>
+          <a href="#cases" class="text-gray-300 hover:text-white transition-colors">Cases</a>
+          <a href="#sobre" class="text-gray-300 hover:text-white transition-colors">Sobre</a>
+          <a href="#projetos" class="text-gray-300 hover:text-white transition-colors">Projetos</a>
+          <a href="#depoimentos" class="text-gray-300 hover:text-white transition-colors">Depoimentos</a>
+          <a href="#faq" class="text-gray-300 hover:text-white transition-colors">FAQ</a>
         </nav>
         <div class="flex items-center gap-2">
           <button id="openPlansBtn" class="btn-17 btn-17-sm"><span class="text-container"><span class="text"><i class="fas fa-crown mr-1"></i>Planos</span></span></button>
@@ -635,249 +433,723 @@
       </div>
     </div>
   </header>
-  <div class="mobile-nav" id="mobileNav"><div class="close-mobile" id="closeMobile">&times;</div><a href="#servicos">Serviços</a><a href="#cases">Cases</a><a href="#sobre">Sobre</a><a href="#projetos">Projetos</a><a href="#depoimentos">Depoimentos</a><a href="#faq">FAQ</a><a href="https://wa.me/5581995498590" target="_blank">Contato WhatsApp</a></div>
+
+  <div class="mobile-nav" id="mobileNav">
+    <div class="close-mobile" id="closeMobile">&times;</div>
+    <a href="#servicos">Serviços</a><a href="#cases">Cases</a><a href="#sobre">Sobre</a>
+    <a href="#projetos">Projetos</a><a href="#depoimentos">Depoimentos</a><a href="#faq">FAQ</a>
+    <a href="https://wa.me/5581995498590" target="_blank">Contato WhatsApp</a>
+  </div>
 
   <main>
-    <!-- Hero -->
+    <!-- ===== HERO ===== -->
     <section class="relative overflow-hidden bg-gradient-hero pt-20 pb-20 md:pt-28 md:pb-28 jornal-section">
-      <div class="blob" style="top: 10%; left: 10%;"></div><div class="blob" style="bottom: 10%; right: 10%; animation-delay: 4s;"></div>
-      <div class="relative max-w-7xl mx-auto px-6 text-center">
-        <span class="inline-block text-xs font-semibold tracking-wider text-purple-300 uppercase bg-purple-900/30 px-3 py-1 rounded-full border border-purple-500/20 mb-4 fade-up">Webdesigner premium</span>
-        <h1 class="text-4xl md:text-6xl font-bold leading-tight text-white fade-up">Um design <span class="text-gradient">premium</span><br/>para quem busca exclusividade</h1>
-        <p class="text-lg text-gray-300 mt-6 max-w-2xl mx-auto fade-up">Websites de alto padrão para empresários que vão se diferenciar.</p>
-        <div class="mt-8 flex flex-wrap justify-center gap-4 fade-up">
-          <button id="openPlansBtnHero" class="btn-17"><span class="text-container"><span class="text"><i class="fas fa-rocket mr-2"></i>Ver Planos</span></span></button>
-          <a href="https://wa.me/5581995498590" target="_blank" class="btn-17"><span class="text-container"><span class="text"><i class="fab fa-whatsapp mr-2"></i>Solicitar orçamento</span></span></a>
+      <div class="blob" style="top:10%;left:10%"></div>
+      <div class="blob" style="bottom:10%;right:10%;animation-delay:4s"></div>
+      <div class="relative max-w-7xl mx-auto px-6">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+          <!-- Texto -->
+          <div class="text-center md:text-left">
+            <span class="inline-block text-xs font-semibold tracking-wider text-purple-300 uppercase bg-purple-900/30 px-3 py-1 rounded-full border border-purple-500/20 mb-4">✦ Webdesigner premium</span>
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-white mb-6">
+              Um design <span class="text-gradient">premium</span><br/>para quem busca<br/>exclusividade
+            </h1>
+            <p class="text-lg text-gray-300 mb-8 max-w-lg">Websites de alto padrão para empresários que vão se diferenciar. Performance, design e conversão em um só lugar.</p>
+            <div class="flex flex-wrap justify-center md:justify-start gap-4 mb-8">
+              <button id="openPlansBtnHero" class="btn-17"><span class="text-container"><span class="text"><i class="fas fa-rocket mr-2"></i>Ver Planos</span></span></button>
+              <a href="https://wa.me/5581995498590" target="_blank" class="btn-17"><span class="text-container"><span class="text"><i class="fab fa-whatsapp mr-2"></i>Solicitar orçamento</span></span></a>
+            </div>
+            <div class="flex flex-wrap gap-4 justify-center md:justify-start">
+              <div class="garantia-badge"><i class="fas fa-shield-alt"></i> Entrega garantida</div>
+              <div class="garantia-badge"><i class="fas fa-star"></i> +100 projetos</div>
+              <div class="garantia-badge"><i class="fas fa-bolt"></i> Alta performance</div>
+            </div>
+          </div>
+          <!-- Mockup -->
+          <div class="relative flex justify-center md:justify-end">
+            <div class="hero-mockup w-full max-w-lg">
+              <div class="mockup-dots">
+                <div class="mockup-dot bg-red-400"></div>
+                <div class="mockup-dot bg-yellow-400"></div>
+                <div class="mockup-dot bg-green-400"></div>
+              </div>
+              <img src="https://images.unsplash.com/photo-1547658719-da2b51169166?w=800&q=80" 
+                   alt="Web Design Premium" class="w-full h-72 md:h-80 object-cover" style="margin-top:32px">
+              <!-- Overlay gradient -->
+              <div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(144,97,238,0.15) 0%,transparent 50%);pointer-events:none;border-radius:20px"></div>
+            </div>
+            <!-- Floating badges -->
+            <div class="absolute -bottom-4 -left-4 glass-card rounded-2xl p-3 flex items-center gap-2 blur ativo" style="min-width:160px">
+              <div style="width:36px;height:36px;background:linear-gradient(135deg,#9061EE,#CEFF66);border-radius:10px;display:flex;align-items:center;justify-content:center">
+                <i class="fas fa-chart-line text-black text-sm"></i>
+              </div>
+              <div>
+                <div class="text-white font-bold text-sm">+240%</div>
+                <div class="text-gray-400 text-xs">Conversões</div>
+              </div>
+            </div>
+            <div class="absolute -top-4 -right-4 glass-card rounded-2xl p-3 flex items-center gap-2 scroll-right ativo" style="min-width:150px">
+              <div style="width:36px;height:36px;background:linear-gradient(135deg,#CEFF66,#9061EE);border-radius:10px;display:flex;align-items:center;justify-content:center">
+                <i class="fas fa-star text-black text-sm"></i>
+              </div>
+              <div>
+                <div class="text-white font-bold text-sm">5.0 ★★★★★</div>
+                <div class="text-gray-400 text-xs">Avaliação</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- Serviços (cards) -->
-    <section id="servicos" class="py-16 max-w-7xl mx-auto px-6 jornal-section">
-      <div class="text-center mb-12"><h2 class="text-3xl md:text-4xl font-bold text-white">Nossos <span class="text-gradient">Serviços</span></h2><p class="text-gray-400 mt-2">Soluções completas</p></div>
+    <!-- ===== FAIXA ANIMADA ===== -->
+    <div class="textoanimado bg-[#0C0C12] border-y border-white/5 py-4 overflow-hidden">
+      <div class="textoanimado2 text-base font-bold whitespace-nowrap">
+        <span class="text-white mx-4">Posicionamento</span><span class="text-gradient mx-4">•</span>
+        <span class="text-white mx-4">Design</span><span class="text-gradient mx-4">•</span>
+        <span class="text-white mx-4">Sites</span><span class="text-gradient mx-4">•</span>
+        <span class="text-white mx-4">Presença</span><span class="text-gradient mx-4">•</span>
+        <span class="text-white mx-4">Exclusividade</span><span class="text-gradient mx-4">•</span>
+        <span class="text-white mx-4">Luxo</span><span class="text-gradient mx-4">•</span>
+        <span class="text-white mx-4">Techify.Max</span><span class="text-gradient mx-4">•</span>
+        <span class="text-white mx-4">Posicionamento</span><span class="text-gradient mx-4">•</span>
+        <span class="text-white mx-4">Design</span><span class="text-gradient mx-4">•</span>
+        <span class="text-white mx-4">Sites</span><span class="text-gradient mx-4">•</span>
+        <span class="text-white mx-4">Presença</span><span class="text-gradient mx-4">•</span>
+        <span class="text-white mx-4">Exclusividade</span><span class="text-gradient mx-4">•</span>
+        <span class="text-white mx-4">Luxo</span><span class="text-gradient mx-4">•</span>
+        <span class="text-white mx-4">Techify.Max</span><span class="text-gradient mx-4">•</span>
+      </div>
+    </div>
+
+    <!-- ===== SERVIÇOS ===== -->
+    <section id="servicos" class="py-20 max-w-7xl mx-auto px-6 jornal-section">
+      <div class="text-center mb-14">
+        <span class="inline-block text-xs font-semibold tracking-wider text-purple-300 uppercase bg-purple-900/30 px-3 py-1 rounded-full border border-purple-500/20 mb-3">O que oferecemos</span>
+        <h2 class="text-3xl md:text-4xl font-bold text-white">Nossos <span class="text-gradient">Serviços</span></h2>
+        <div class="section-divider"></div>
+        <p class="text-gray-400 mt-4 max-w-xl mx-auto">Soluções completas para sua presença digital, do design à automação.</p>
+      </div>
       <div class="services-container" id="servicesContainer">
         <div class="service-card" style="--r:0">
-          <img src="https://cdn.pixabay.com/photo/2017/02/15/13/18/graphic-designer-2068452_960_720.jpg" alt="Design" class="service-img">
+          <img src="https://images.unsplash.com/photo-1561070791-2526d30994b5?w=200&q=80" alt="Design" class="service-img">
           <span>Design</span>
         </div>
         <div class="service-card" style="--r:0">
-          <img src="https://cdn.pixabay.com/photo/2016/11/18/17/24/laptop-1837303_960_720.jpg" alt="Criação Sites" class="service-img">
+          <img src="https://images.unsplash.com/photo-1547658719-da2b51169166?w=200&q=80" alt="Criação Sites" class="service-img">
           <span>Criação Sites</span>
         </div>
         <div class="service-card" style="--r:0">
-          <img src="https://cdn.pixabay.com/photo/2016/03/27/19/46/smartphone-1283615_960_720.jpg" alt="Social Media" class="service-img">
+          <img src="https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=200&q=80" alt="Social Media" class="service-img">
           <span>Social Media</span>
         </div>
         <div class="service-card" style="--r:0">
-          <img src="https://cdn.pixabay.com/photo/2018/05/08/08/46/artificial-intelligence-3382507_960_720.jpg" alt="Automação IA" class="service-img">
+          <img src="https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=200&q=80" alt="Automação IA" class="service-img">
           <span>Automação IA</span>
         </div>
         <div class="service-card" style="--r:0">
-          <img src="https://cdn.pixabay.com/photo/2016/11/29/03/52/logo-1864371_960_720.png" alt="Identidade Visual" class="service-img">
+          <img src="https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=200&q=80" alt="Identidade Visual" class="service-img">
           <span>Identidade Visual</span>
         </div>
       </div>
+
+      <!-- Grid de serviços detalhados -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
+        <div class="glass-card rounded-2xl overflow-hidden tilt-card glow-hover">
+          <div class="project-img-wrapper h-48">
+            <img src="https://images.unsplash.com/photo-1561070791-2526d30994b5?w=600&q=80" alt="Design Gráfico" class="w-full h-full object-cover">
+            <div class="project-overlay"></div>
+          </div>
+          <div class="p-5">
+            <div class="flex items-center gap-3 mb-3">
+              <div style="width:40px;height:40px;background:linear-gradient(135deg,#9061EE20,#9061EE40);border:1px solid rgba(144,97,238,0.3);border-radius:10px;display:flex;align-items:center;justify-content:center">
+                <i class="fas fa-palette text-purple-400"></i>
+              </div>
+              <h3 class="font-bold text-white text-lg">Design Gráfico</h3>
+            </div>
+            <p class="text-gray-400 text-sm">Identidade visual completa, logotipos, materiais de marketing e muito mais.</p>
+          </div>
+        </div>
+        <div class="glass-card rounded-2xl overflow-hidden tilt-card glow-hover">
+          <div class="project-img-wrapper h-48">
+            <img src="https://images.unsplash.com/photo-1547658719-da2b51169166?w=600&q=80" alt="Criação de Sites" class="w-full h-full object-cover">
+            <div class="project-overlay"></div>
+          </div>
+          <div class="p-5">
+            <div class="flex items-center gap-3 mb-3">
+              <div style="width:40px;height:40px;background:linear-gradient(135deg,#9061EE20,#9061EE40);border:1px solid rgba(144,97,238,0.3);border-radius:10px;display:flex;align-items:center;justify-content:center">
+                <i class="fas fa-code text-purple-400"></i>
+              </div>
+              <h3 class="font-bold text-white text-lg">Sites Premium</h3>
+            </div>
+            <p class="text-gray-400 text-sm">Websites de alto padrão com foco em performance, conversão e design exclusivo.</p>
+          </div>
+        </div>
+        <div class="glass-card rounded-2xl overflow-hidden tilt-card glow-hover">
+          <div class="project-img-wrapper h-48">
+            <img src="https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=600&q=80" alt="Automação IA" class="w-full h-full object-cover">
+            <div class="project-overlay"></div>
+          </div>
+          <div class="p-5">
+            <div class="flex items-center gap-3 mb-3">
+              <div style="width:40px;height:40px;background:linear-gradient(135deg,#9061EE20,#9061EE40);border:1px solid rgba(144,97,238,0.3);border-radius:10px;display:flex;align-items:center;justify-content:center">
+                <i class="fas fa-robot text-purple-400"></i>
+              </div>
+              <h3 class="font-bold text-white text-lg">Automação com IA</h3>
+            </div>
+            <p class="text-gray-400 text-sm">Integração de inteligência artificial para automatizar processos e aumentar resultados.</p>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <!-- Frase -->
-    <section class="py-16 px-6 max-w-7xl mx-auto jornal-section"><div class="text-center"><p class="text-4xl md:text-6xl font-bold max-w-5xl mx-auto leading-tight"><span class="selecionado">Se for ter um site, que ele seja inovador</span></p><div class="mt-8 flex justify-center"><img src="https://dieselwebp.com/wp-content/uploads/2026/02/Group-1-12.png" alt="Techify" class="h-12 opacity-80 blur ativo"></div></div></section>
+    <!-- ===== FRASE DESTAQUE ===== -->
+    <section class="py-20 px-6 max-w-7xl mx-auto jornal-section">
+      <div class="text-center">
+        <p class="text-4xl md:text-6xl font-bold max-w-5xl mx-auto leading-tight">
+          <span class="selecionado">Se for ter um site, que ele seja inovador</span>
+        </p>
+        <div class="mt-10 flex justify-center">
+          <div class="glass-card rounded-2xl p-6 max-w-2xl w-full blur ativo">
+            <div class="grid grid-cols-3 gap-6 text-center">
+              <div>
+                <div class="text-3xl font-bold text-gradient">+100</div>
+                <div class="text-gray-400 text-sm mt-1">Projetos entregues</div>
+              </div>
+              <div>
+                <div class="text-3xl font-bold text-gradient">+60</div>
+                <div class="text-gray-400 text-sm mt-1">Clientes satisfeitos</div>
+              </div>
+              <div>
+                <div class="text-3xl font-bold text-gradient">+5</div>
+                <div class="text-gray-400 text-sm mt-1">Anos de experiência</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-    <!-- Cases (influencers) -->
-    <section id="cases" class="py-16 max-w-7xl mx-auto px-6 jornal-section">
-      <div class="text-center mb-12"><h2 class="text-3xl md:text-4xl font-bold text-white">Cases de <span class="text-gradient">sucesso</span></h2></div>
+    <!-- ===== CASES ===== -->
+    <section id="cases" class="py-20 max-w-7xl mx-auto px-6 jornal-section">
+      <div class="text-center mb-14">
+        <span class="inline-block text-xs font-semibold tracking-wider text-purple-300 uppercase bg-purple-900/30 px-3 py-1 rounded-full border border-purple-500/20 mb-3">Resultados reais</span>
+        <h2 class="text-3xl md:text-4xl font-bold text-white">Cases de <span class="text-gradient">sucesso</span></h2>
+        <div class="section-divider"></div>
+      </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="glass-card tilt-card glow-hover rounded-2xl p-6 blur ativo"><div class="flex items-center gap-4"><img src="https://dieselwebp.com/wp-content/uploads/2026/02/IMg-47.png" alt="Deive Leonardo" class="w-16 h-16 rounded-full object-cover border-2 border-purple-500/30"><div><h3 class="font-bold text-xl text-white">Deive Leonardo</h3><p class="text-gray-400">@deiveleonardo</p></div></div><hr class="my-4 border-white/10"><div class="flex items-center gap-2 text-emerald-300"><i class="fas fa-check-circle"></i><span>16,6M seguidores</span></div></div>
-        <div class="glass-card tilt-card glow-hover rounded-2xl p-6 blur ativo"><div class="flex items-center gap-4"><img src="https://dieselwebp.com/wp-content/uploads/2026/02/IMg-46.png" alt="Gabriel Ganley" class="w-16 h-16 rounded-full object-cover border-2 border-purple-500/30"><div><h3 class="font-bold text-xl text-white">Gabriel Ganley</h3><p class="text-gray-400">@ganleygabriel</p></div></div><hr class="my-4 border-white/10"><div class="flex items-center gap-2 text-emerald-300"><i class="fas fa-check-circle"></i><span>1,4M seguidores</span></div></div>
-        <div class="glass-card tilt-card glow-hover rounded-2xl p-6 blur ativo"><div class="flex items-center gap-4"><img src="https://dieselwebp.com/wp-content/uploads/2026/02/IMg-48.png" alt="Karina Bacchi" class="w-16 h-16 rounded-full object-cover border-2 border-purple-500/30"><div><h3 class="font-bold text-xl text-white">Karina Bacchi</h3><p class="text-gray-400">@karinabacchi</p></div></div><hr class="my-4 border-white/10"><div class="flex items-center gap-2 text-emerald-300"><i class="fas fa-check-circle"></i><span>9,5M seguidores</span></div></div>
-        <div class="glass-card tilt-card glow-hover rounded-2xl p-6 blur ativo"><div class="flex items-center gap-4"><img src="https://dieselwebp.com/wp-content/uploads/2026/02/IMg-45.png" alt="Daniel Scott" class="w-16 h-16 rounded-full object-cover border-2 border-purple-500/30"><div><h3 class="font-bold text-xl text-white">Daniel Scott</h3><p class="text-gray-400">@odanielscott</p></div></div><hr class="my-4 border-white/10"><div class="flex items-center gap-2 text-emerald-300"><i class="fas fa-check-circle"></i><span>196K seguidores</span></div></div>
+        <div class="glass-card tilt-card glow-hover rounded-2xl p-6 blur ativo">
+          <div class="flex items-center gap-4">
+            <img src="https://dieselwebp.com/wp-content/uploads/2026/02/IMg-47.png" alt="Deive Leonardo" class="w-16 h-16 rounded-full object-cover border-2 border-purple-500/30">
+            <div>
+              <h3 class="font-bold text-xl text-white">Deive Leonardo</h3>
+              <p class="text-gray-400">@deiveleonardo</p>
+            </div>
+          </div>
+          <hr class="my-4 border-white/10">
+          <div class="flex items-center gap-2 text-emerald-300 mb-2"><i class="fas fa-check-circle"></i><span>16,6M seguidores</span></div>
+          <p class="text-gray-400 text-sm">Presença digital de alto impacto para o maior pastor evangélico do Brasil.</p>
+        </div>
+        <div class="glass-card tilt-card glow-hover rounded-2xl p-6 blur ativo">
+          <div class="flex items-center gap-4">
+            <img src="https://dieselwebp.com/wp-content/uploads/2026/02/IMg-46.png" alt="Gabriel Ganley" class="w-16 h-16 rounded-full object-cover border-2 border-purple-500/30">
+            <div>
+              <h3 class="font-bold text-xl text-white">Gabriel Ganley</h3>
+              <p class="text-gray-400">@ganleygabriel</p>
+            </div>
+          </div>
+          <hr class="my-4 border-white/10">
+          <div class="flex items-center gap-2 text-emerald-300 mb-2"><i class="fas fa-check-circle"></i><span>1,4M seguidores</span></div>
+          <p class="text-gray-400 text-sm">Site de alta conversão para influenciador fitness de renome nacional.</p>
+        </div>
+        <div class="glass-card tilt-card glow-hover rounded-2xl p-6 blur ativo">
+          <div class="flex items-center gap-4">
+            <img src="https://dieselwebp.com/wp-content/uploads/2026/02/IMg-48.png" alt="Karina Bacchi" class="w-16 h-16 rounded-full object-cover border-2 border-purple-500/30">
+            <div>
+              <h3 class="font-bold text-xl text-white">Karina Bacchi</h3>
+              <p class="text-gray-400">@karinabacchi</p>
+            </div>
+          </div>
+          <hr class="my-4 border-white/10">
+          <div class="flex items-center gap-2 text-emerald-300 mb-2"><i class="fas fa-check-circle"></i><span>9,5M seguidores</span></div>
+          <p class="text-gray-400 text-sm">Plataforma digital premium para apresentadora e empresária.</p>
+        </div>
+        <div class="glass-card tilt-card glow-hover rounded-2xl p-6 blur ativo">
+          <div class="flex items-center gap-4">
+            <img src="https://dieselwebp.com/wp-content/uploads/2026/02/IMg-45.png" alt="Daniel Scott" class="w-16 h-16 rounded-full object-cover border-2 border-purple-500/30">
+            <div>
+              <h3 class="font-bold text-xl text-white">Daniel Scott</h3>
+              <p class="text-gray-400">@odanielscott</p>
+            </div>
+          </div>
+          <hr class="my-4 border-white/10">
+          <div class="flex items-center gap-2 text-emerald-300 mb-2"><i class="fas fa-check-circle"></i><span>196K seguidores</span></div>
+          <p class="text-gray-400 text-sm">Presença digital estratégica para criador de conteúdo em ascensão.</p>
+        </div>
       </div>
     </section>
 
-    <!-- Meus Projetos -->
-    <section id="projetos" class="py-16 max-w-7xl mx-auto px-6 jornal-section">
-      <div class="text-center mb-12"><h2 class="text-3xl md:text-4xl font-bold text-white">Meus <span class="text-gradient">Projetos</span></h2><p class="text-gray-400">Sites entregues com performance e design exclusivo</p></div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div class="glass-card rounded-2xl overflow-hidden">
-          <img src="https://cdn.pixabay.com/photo/2016/11/18/19/17/store-1837954_960_720.jpg" alt="Loja Comassetto" class="w-full h-40 object-cover">
-          <div class="p-4"><h3 class="font-bold text-xl">Loja Comassetto</h3><p class="text-sm text-gray-300">Moda masculina elegante.</p><a href="https://comassettomodahomem.com.br" target="_blank" class="text-purple-300 text-sm">Visitar →</a></div>
+    <!-- ===== PROJETOS ===== -->
+    <section id="projetos" class="py-20 max-w-7xl mx-auto px-6 jornal-section">
+      <div class="text-center mb-14">
+        <span class="inline-block text-xs font-semibold tracking-wider text-purple-300 uppercase bg-purple-900/30 px-3 py-1 rounded-full border border-purple-500/20 mb-3">Portfólio</span>
+        <h2 class="text-3xl md:text-4xl font-bold text-white">Meus <span class="text-gradient">Projetos</span></h2>
+        <div class="section-divider"></div>
+        <p class="text-gray-400 mt-4">Sites entregues com performance e design exclusivo</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="projectsGrid">
+        <div class="glass-card rounded-2xl overflow-hidden tilt-card glow-hover">
+          <div class="project-img-wrapper h-52">
+            <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=700&q=80" alt="Loja Comassetto" class="w-full h-full object-cover">
+            <div class="project-overlay"></div>
+            <div class="absolute bottom-3 left-4 z-10">
+              <span class="text-xs bg-purple-600/80 text-white px-2 py-1 rounded-full">E-commerce</span>
+            </div>
+          </div>
+          <div class="p-5">
+            <h3 class="font-bold text-xl text-white mb-1">Loja Comassetto</h3>
+            <p class="text-sm text-gray-300 mb-3">Moda masculina elegante com e-commerce completo.</p>
+            <a href="https://comassettomodahomem.com.br" target="_blank" class="text-purple-300 text-sm hover:text-purple-200 transition-colors">Visitar site →</a>
+          </div>
         </div>
-        <div class="glass-card rounded-2xl overflow-hidden">
-          <img src="https://cdn.pixabay.com/photo/2017/09/07/08/41/residential-areas-2724397_960_720.jpg" alt="Zona Sul Lançamentos" class="w-full h-40 object-cover">
-          <div class="p-4"><h3 class="font-bold text-xl">Zona Sul Lançamentos</h3><p class="text-sm text-gray-300">Gestão de imóveis e leads.</p><a href="https://zonasullancamentos.com.br" target="_blank" class="text-purple-300 text-sm">Visitar →</a></div>
+        <div class="glass-card rounded-2xl overflow-hidden tilt-card glow-hover">
+          <div class="project-img-wrapper h-52">
+            <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=700&q=80" alt="Zona Sul Lançamentos" class="w-full h-full object-cover">
+            <div class="project-overlay"></div>
+            <div class="absolute bottom-3 left-4 z-10">
+              <span class="text-xs bg-purple-600/80 text-white px-2 py-1 rounded-full">Imóveis</span>
+            </div>
+          </div>
+          <div class="p-5">
+            <h3 class="font-bold text-xl text-white mb-1">Zona Sul Lançamentos</h3>
+            <p class="text-sm text-gray-300 mb-3">Gestão de imóveis e captação de leads qualificados.</p>
+            <a href="https://zonasullancamentos.com.br" target="_blank" class="text-purple-300 text-sm hover:text-purple-200 transition-colors">Visitar site →</a>
+          </div>
         </div>
-        <div class="glass-card rounded-2xl overflow-hidden">
-          <img src="https://cdn.pixabay.com/photo/2018/01/09/18/32/building-3072272_960_720.jpg" alt="Maurício Engenharia" class="w-full h-40 object-cover">
-          <div class="p-4"><h3 class="font-bold text-xl">Maurício Engenharia</h3><p class="text-sm text-gray-300">+160% orçamentos.</p><a href="https://mauricioengenharia.com.br" target="_blank" class="text-purple-300 text-sm">Visitar →</a></div>
+        <div class="glass-card rounded-2xl overflow-hidden tilt-card glow-hover">
+          <div class="project-img-wrapper h-52">
+            <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=700&q=80" alt="Maurício Engenharia" class="w-full h-full object-cover">
+            <div class="project-overlay"></div>
+            <div class="absolute bottom-3 left-4 z-10">
+              <span class="text-xs bg-purple-600/80 text-white px-2 py-1 rounded-full">Engenharia</span>
+            </div>
+          </div>
+          <div class="p-5">
+            <h3 class="font-bold text-xl text-white mb-1">Maurício Engenharia</h3>
+            <p class="text-sm text-gray-300 mb-3">+160% de orçamentos recebidos após novo site.</p>
+            <a href="https://mauricioengenharia.com.br" target="_blank" class="text-purple-300 text-sm hover:text-purple-200 transition-colors">Visitar site →</a>
+          </div>
         </div>
-        <div class="glass-card rounded-2xl overflow-hidden">
-          <img src="https://cdn.pixabay.com/photo/2017/09/25/13/20/dog-2785273_960_720.jpg" alt="Vet Fidelity" class="w-full h-40 object-cover">
-          <div class="p-4"><h3 class="font-bold text-xl">Vet Fidelity</h3><p class="text-sm text-gray-300">+240% agendamentos.</p><a href="https://vetfidelity.com.br" target="_blank" class="text-purple-300 text-sm">Visitar →</a></div>
+        <div class="glass-card rounded-2xl overflow-hidden tilt-card glow-hover">
+          <div class="project-img-wrapper h-52">
+            <img src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=700&q=80" alt="Vet Fidelity" class="w-full h-full object-cover">
+            <div class="project-overlay"></div>
+            <div class="absolute bottom-3 left-4 z-10">
+              <span class="text-xs bg-purple-600/80 text-white px-2 py-1 rounded-full">Veterinária</span>
+            </div>
+          </div>
+          <div class="p-5">
+            <h3 class="font-bold text-xl text-white mb-1">Vet Fidelity</h3>
+            <p class="text-sm text-gray-300 mb-3">+240% de agendamentos com novo site otimizado.</p>
+            <a href="https://vetfidelity.com.br" target="_blank" class="text-purple-300 text-sm hover:text-purple-200 transition-colors">Visitar site →</a>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- Sobre -->
-    <section id="sobre" class="py-16 max-w-7xl mx-auto px-6 jornal-section">
-      <div class="text-center mb-10"><h2 class="text-3xl md:text-4xl font-bold text-white">Conheça seu <span class="text-gradient">webdesigner</span></h2></div>
-      <div class="flex flex-col items-center text-center max-w-3xl mx-auto"><div class="space-y-4 text-gray-300 text-lg"><p>Prazer, me chamo <strong class="chromatic">Marcos Henrique</strong>. Tenho 19 anos e empreendo desde os 16...</p><p>Hoje atuo como Webdesigner, desenvolvendo <span class="text-gradient font-semibold">experiências</span> digitais...</p><p class="font-bold text-white">Não crio apenas sites, crio presença, posicionamento e autoridade!</p></div><div class="mt-8"><a href="https://wa.me/5581995498590" class="btn-17"><span class="text-container"><span class="text"><i class="fab fa-whatsapp mr-2"></i>Falar com Marcos</span></span></a></div></div>
+    <!-- ===== SOBRE ===== -->
+    <section id="sobre" class="py-20 max-w-7xl mx-auto px-6 jornal-section">
+      <div class="text-center mb-14">
+        <span class="inline-block text-xs font-semibold tracking-wider text-purple-300 uppercase bg-purple-900/30 px-3 py-1 rounded-full border border-purple-500/20 mb-3">Quem sou eu</span>
+        <h2 class="text-3xl md:text-4xl font-bold text-white">Conheça seu <span class="text-gradient">webdesigner</span></h2>
+        <div class="section-divider"></div>
+      </div>
+      <div class="grid md:grid-cols-2 gap-12 items-center max-w-5xl mx-auto">
+        <!-- Imagem -->
+        <div class="flex justify-center scroll-left ativo">
+          <div class="sobre-img-wrapper w-72 h-80 md:w-80 md:h-96">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80" 
+                 alt="Marcos Henrique - Webdesigner" class="w-full h-full object-cover">
+          </div>
+        </div>
+        <!-- Texto -->
+        <div class="space-y-5 text-gray-300 text-lg scroll-right ativo">
+          <p>Prazer, me chamo <strong class="chromatic">Marcos Henrique</strong>. Tenho 19 anos e empreendo desde os 16. Minha jornada começou com curiosidade e se transformou em paixão por criar experiências digitais que realmente convertem.</p>
+          <p>Hoje atuo como Webdesigner, desenvolvendo <span class="text-gradient font-semibold">experiências digitais</span> de alto impacto para empresários e influenciadores que querem se destacar no mercado.</p>
+          <p class="font-bold text-white text-xl">Não crio apenas sites, crio presença, posicionamento e autoridade!</p>
+          <div class="flex flex-wrap gap-3 pt-2">
+            <span class="garantia-badge"><i class="fas fa-code"></i> Desenvolvimento</span>
+            <span class="garantia-badge"><i class="fas fa-palette"></i> UI/UX Design</span>
+            <span class="garantia-badge"><i class="fas fa-chart-bar"></i> Conversão</span>
+          </div>
+          <div class="pt-4">
+            <a href="https://wa.me/5581995498590" class="btn-17"><span class="text-container"><span class="text"><i class="fab fa-whatsapp mr-2"></i>Falar com Marcos</span></span></a>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <!-- Jornada números -->
-    <section class="py-16 bg-[#0A0A10] border-y border-white/5 jornal-section"><div class="max-w-7xl mx-auto px-6"><div class="text-center mb-10"><h2 class="text-2xl md:text-3xl font-bold text-white">Um pouco da minha jornada</h2></div><div class="grid grid-cols-1 sm:grid-cols-3 gap-8 text-center"><div class="glass-card p-6"><div class="text-5xl font-bold text-gradient">+100</div><div>Projetos</div></div><div class="glass-card p-6"><div class="text-5xl font-bold text-gradient">+60</div><div>Clientes</div></div><div class="glass-card p-6"><div class="text-5xl font-bold text-gradient">+5</div><div>Anos</div></div></div></div></section>
-
-    <!-- Depoimentos -->
-    <section id="depoimentos" class="py-16 max-w-7xl mx-auto px-6 jornal-section">
-      <div class="text-center mb-10"><h2 class="text-3xl md:text-4xl font-bold text-white">O próximo depoimento será o <span class="text-gradient">seu!</span></h2></div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto"><div class="space-y-4"><div class="glass-card rounded-2xl overflow-hidden"><img src="https://dieselwebp.com/wp-content/uploads/2026/02/mentos.jpg" class="w-full h-40 object-cover" alt="Depoimento 1"></div><div class="glass-card rounded-2xl overflow-hidden"><img src="https://dieselwebp.com/wp-content/uploads/2026/02/mentos-1.jpg" class="w-full h-40 object-cover" alt="Depoimento 2"></div></div><div class="space-y-4"><div class="glass-card rounded-2xl overflow-hidden"><img src="https://dieselwebp.com/wp-content/uploads/2026/02/Depoimento.jpg" class="w-full h-40 object-cover" alt="Depoimento 3"></div><div class="glass-card p-4"><p class="italic">"Uma apresentação boa aumenta o valor de seu serviço/produto!"</p></div></div></div>
+    <!-- ===== NÚMEROS ===== -->
+    <section class="py-20 bg-[#0A0A10] border-y border-white/5 jornal-section">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-12">
+          <h2 class="text-2xl md:text-3xl font-bold text-white">Um pouco da minha jornada</h2>
+          <div class="section-divider"></div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
+          <div class="glass-card p-8 rounded-2xl">
+            <div class="stat-number text-gradient">+100</div>
+            <div class="text-gray-300 mt-2 font-medium">Projetos entregues</div>
+            <div class="text-gray-500 text-sm mt-1">Em diversas áreas e segmentos</div>
+          </div>
+          <div class="glass-card p-8 rounded-2xl">
+            <div class="stat-number text-gradient">+60</div>
+            <div class="text-gray-300 mt-2 font-medium">Clientes satisfeitos</div>
+            <div class="text-gray-500 text-sm mt-1">Com resultados comprovados</div>
+          </div>
+          <div class="glass-card p-8 rounded-2xl">
+            <div class="stat-number text-gradient">+5</div>
+            <div class="text-gray-300 mt-2 font-medium">Anos de experiência</div>
+            <div class="text-gray-500 text-sm mt-1">Empreendendo desde os 16</div>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <!-- FAQ -->
-    <section id="faq" class="py-16 max-w-7xl mx-auto px-6 jornal-section">
-      <div class="text-center mb-10"><h2 class="text-3xl font-bold text-white">FAQ</h2><p class="text-gradient text-lg">Perguntas Frequentes</p></div>
-      <div class="grid md:grid-cols-2 gap-8 faq"><div><details open><summary>Qual o processo para começar? <i class="fas fa-plus"></i></summary><p class="mt-2 text-gray-300">Call rápida para entender seu objetivo, briefing e desenvolvimento.</p></details><details><summary>Em quanto tempo fica pronto? <i class="fas fa-plus"></i></summary><p class="mt-2 text-gray-300">Depende do projeto, geralmente 2 a 4 semanas.</p></details></div><div><details><summary>Você oferece suporte após a entrega? <i class="fas fa-plus"></i></summary><p class="mt-2 text-gray-300">Sim, 3 meses de ajustes inclusos.</p></details><details><summary>Quais os métodos de pagamento? <i class="fas fa-plus"></i></summary><p class="mt-2 text-gray-300">PIX ou cartão de crédito.</p></details></div></div>
+    <!-- ===== DEPOIMENTOS ===== -->
+    <section id="depoimentos" class="py-20 max-w-7xl mx-auto px-6 jornal-section">
+      <div class="text-center mb-14">
+        <span class="inline-block text-xs font-semibold tracking-wider text-purple-300 uppercase bg-purple-900/30 px-3 py-1 rounded-full border border-purple-500/20 mb-3">Resultados reais</span>
+        <h2 class="text-3xl md:text-4xl font-bold text-white">O próximo depoimento será o <span class="text-gradient">seu!</span></h2>
+        <div class="section-divider"></div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+        <div class="space-y-4">
+          <div class="glass-card rounded-2xl overflow-hidden depo-img">
+            <img src="https://dieselwebp.com/wp-content/uploads/2026/02/mentos.jpg" class="w-full h-48 object-cover" alt="Depoimento 1">
+          </div>
+          <div class="glass-card rounded-2xl overflow-hidden depo-img">
+            <img src="https://dieselwebp.com/wp-content/uploads/2026/02/mentos-1.jpg" class="w-full h-48 object-cover" alt="Depoimento 2">
+          </div>
+        </div>
+        <div class="space-y-4">
+          <div class="glass-card rounded-2xl overflow-hidden depo-img">
+            <img src="https://dieselwebp.com/wp-content/uploads/2026/02/Depoimento.jpg" class="w-full h-48 object-cover" alt="Depoimento 3">
+          </div>
+          <div class="glass-card rounded-2xl p-6">
+            <div class="flex gap-1 mb-3">
+              <i class="fas fa-star text-yellow-400"></i><i class="fas fa-star text-yellow-400"></i>
+              <i class="fas fa-star text-yellow-400"></i><i class="fas fa-star text-yellow-400"></i>
+              <i class="fas fa-star text-yellow-400"></i>
+            </div>
+            <p class="italic text-gray-300 text-lg">"Uma apresentação boa aumenta o valor de seu serviço/produto!"</p>
+            <p class="text-purple-400 text-sm mt-3 font-semibold">— Cliente satisfeito</p>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <!-- Feedback -->
-    <section class="py-16 max-w-7xl mx-auto px-6 jornal-section">
-      <div class="text-center mb-10"><h2 class="text-3xl font-bold text-white">Deixe seu <span class="text-gradient">feedback</span></h2></div>
-      <div class="feedback-container"><div class="feedback-left"><div class="rating-stars" id="ratingStars"><i class="star far fa-star" data-value="1"></i><i class="star far fa-star" data-value="2"></i><i class="star far fa-star" data-value="3"></i><i class="star far fa-star" data-value="4"></i><i class="star far fa-star" data-value="5"></i></div><textarea id="feedbackMessage" rows="3" class="feedback-input" placeholder="O que podemos melhorar?"></textarea><button id="sendFeedback" class="btn-17 w-full">Enviar feedback</button></div><div class="feedback-right"><i class="fas fa-star text-6xl text-white/20"></i></div></div>
+    <!-- ===== FAQ ===== -->
+    <section id="faq" class="py-20 max-w-7xl mx-auto px-6 jornal-section">
+      <div class="text-center mb-14">
+        <span class="inline-block text-xs font-semibold tracking-wider text-purple-300 uppercase bg-purple-900/30 px-3 py-1 rounded-full border border-purple-500/20 mb-3">Dúvidas</span>
+        <h2 class="text-3xl font-bold text-white">FAQ</h2>
+        <p class="text-gradient text-lg mt-1">Perguntas Frequentes</p>
+        <div class="section-divider"></div>
+      </div>
+      <div class="grid md:grid-cols-2 gap-8 faq max-w-4xl mx-auto">
+        <div>
+          <details open>
+            <summary>Qual o processo para começar? <i class="fas fa-plus"></i></summary>
+            <p class="mt-3 text-gray-300">Call rápida para entender seu objetivo, briefing detalhado e desenvolvimento personalizado.</p>
+          </details>
+          <details>
+            <summary>Em quanto tempo fica pronto? <i class="fas fa-plus"></i></summary>
+            <p class="mt-3 text-gray-300">Depende do projeto, geralmente 2 a 4 semanas para sites completos.</p>
+          </details>
+        </div>
+        <div>
+          <details>
+            <summary>Você oferece suporte após a entrega? <i class="fas fa-plus"></i></summary>
+            <p class="mt-3 text-gray-300">Sim, 3 meses de ajustes e suporte inclusos em todos os planos.</p>
+          </details>
+          <details>
+            <summary>Quais os métodos de pagamento? <i class="fas fa-plus"></i></summary>
+            <p class="mt-3 text-gray-300">PIX ou cartão de crédito em até 12x.</p>
+          </details>
+        </div>
+      </div>
     </section>
 
-    <!-- Faixa animada -->
-    <div class="textoanimado bg-[#0C0C12] border-y border-white/5 py-4 overflow-hidden"><div class="textoanimado2 text-xl font-bold whitespace-nowrap"><span class="text-white mx-4">Posicionamento • Design • Sites • Presença • Exclusividade • Luxo • Techify.Max</span></div></div>
+    <!-- ===== FEEDBACK ===== -->
+    <section class="py-20 max-w-7xl mx-auto px-6 jornal-section">
+      <div class="text-center mb-10">
+        <h2 class="text-3xl font-bold text-white">Deixe seu <span class="text-gradient">feedback</span></h2>
+        <div class="section-divider"></div>
+      </div>
+      <div class="feedback-container">
+        <div class="feedback-left">
+          <div class="rating-stars" id="ratingStars">
+            <i class="star far fa-star" data-value="1"></i>
+            <i class="star far fa-star" data-value="2"></i>
+            <i class="star far fa-star" data-value="3"></i>
+            <i class="star far fa-star" data-value="4"></i>
+            <i class="star far fa-star" data-value="5"></i>
+          </div>
+          <textarea id="feedbackMessage" rows="3" class="feedback-input" placeholder="O que você achou? Deixe seu comentário..."></textarea>
+          <button id="sendFeedback" class="btn-17 w-full"><span class="text-container"><span class="text">Enviar feedback</span></span></button>
+        </div>
+        <div class="feedback-right">
+          <i class="fas fa-star text-6xl text-white/20"></i>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== FAIXA FINAL ===== -->
+    <div class="textoanimado bg-[#0C0C12] border-y border-white/5 py-4 overflow-hidden">
+      <div class="textoanimado2 text-xl font-bold whitespace-nowrap">
+        <span class="text-white mx-4">Posicionamento • Design • Sites • Presença • Exclusividade • Luxo • Techify.Max • Posicionamento • Design • Sites • Presença • Exclusividade • Luxo • Techify.Max •</span>
+      </div>
+    </div>
   </main>
 
-  <footer class="bg-[#050508] border-t border-white/5 py-12 px-6"><div class="max-w-7xl mx-auto text-center"><h3 class="text-2xl font-bold techify-logo">Techify.Max</h3><p class="text-gray-400 mt-2">Copyright Marcos Henrique 2026 © Todos os direitos reservados</p></div></footer>
+  <footer class="bg-[#050508] border-t border-white/5 py-16 px-6">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
+        <div>
+          <h3 class="text-2xl font-bold techify-logo mb-3">Techify.Max</h3>
+          <p class="text-gray-400 text-sm max-w-xs">Design premium para empresários que querem se diferenciar no mercado digital.</p>
+        </div>
+        <div>
+          <h4 class="text-white font-semibold mb-4">Navegação</h4>
+          <div class="space-y-2">
+            <a href="#servicos" class="block text-gray-400 hover:text-purple-300 text-sm transition-colors">Serviços</a>
+            <a href="#projetos" class="block text-gray-400 hover:text-purple-300 text-sm transition-colors">Projetos</a>
+            <a href="#sobre" class="block text-gray-400 hover:text-purple-300 text-sm transition-colors">Sobre</a>
+            <a href="#faq" class="block text-gray-400 hover:text-purple-300 text-sm transition-colors">FAQ</a>
+          </div>
+        </div>
+        <div>
+          <h4 class="text-white font-semibold mb-4">Contato</h4>
+          <a href="https://wa.me/5581995498590" target="_blank" class="flex items-center gap-2 text-gray-400 hover:text-green-400 text-sm transition-colors mb-2">
+            <i class="fab fa-whatsapp text-green-400"></i> WhatsApp
+          </a>
+          <a href="https://instagram.com/techify.max" target="_blank" class="flex items-center gap-2 text-gray-400 hover:text-purple-300 text-sm transition-colors">
+            <i class="fab fa-instagram text-purple-400"></i> Instagram
+          </a>
+        </div>
+      </div>
+      <div class="border-t border-white/5 pt-6 text-center">
+        <p class="text-gray-500 text-sm">Copyright Marcos Henrique 2026 © Todos os direitos reservados</p>
+      </div>
+    </div>
+  </footer>
 </div>
 
-<!-- Modal Planos -->
-<div id="plansModal" class="plans-modal"><div class="max-w-7xl mx-auto relative"><div class="close-modal" id="closeModalBtn"><i class="fas fa-times text-white"></i></div><div class="text-center mb-8"><h2 class="text-3xl md:text-4xl font-bold text-white">Planos <span class="text-gradient">Exclusivos</span></h2></div><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"><!-- Planos mantidos iguais, omitidos por brevidade --></div></div></div>
+<!-- ===== MODAL PLANOS ===== -->
+<div id="plansModal" class="plans-modal">
+  <div class="max-w-5xl mx-auto relative">
+    <div class="close-modal" id="closeModalBtn"><i class="fas fa-times text-white"></i></div>
+    <div class="text-center mb-10">
+      <span class="inline-block text-xs font-semibold tracking-wider text-purple-300 uppercase bg-purple-900/30 px-3 py-1 rounded-full border border-purple-500/20 mb-3">Investimento</span>
+      <h2 class="text-3xl md:text-4xl font-bold text-white">Planos <span class="text-gradient">Exclusivos</span></h2>
+      <p class="text-gray-400 mt-2">Escolha o plano ideal para o seu negócio</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="plansGrid">
+      <!-- Planos serão carregados do admin -->
+    </div>
+  </div>
+</div>
 
 <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
 <script>
-  // JavaScript mantido igual ao anterior, com correções para mobile e Lenis condicional
-  (function(){
-    "use strict";
-    
-    const isMobile = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
-    
-    // Preloader inteligente
-    const preloader = document.getElementById('preloader');
-    const hidePreloader = () => { preloader.classList.add('hidden'); };
-    const images = Array.from(document.images);
-    let loadedImages = 0;
-    function imageLoaded() {
-      loadedImages++;
-      if (loadedImages >= images.length) setTimeout(hidePreloader, 500);
+(function(){
+  "use strict";
+  const isMobile = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+
+  // Preloader
+  const preloader = document.getElementById('preloader');
+  const hidePreloader = () => preloader.classList.add('hidden');
+  const images = Array.from(document.images);
+  let loaded = 0;
+  function imgLoaded(){ loaded++; if(loaded >= images.length) setTimeout(hidePreloader, 500); }
+  images.forEach(img => { if(img.complete) loaded++; else { img.addEventListener('load', imgLoaded); img.addEventListener('error', imgLoaded); } });
+  if(images.length === 0) setTimeout(hidePreloader, 1000);
+  setTimeout(hidePreloader, isMobile ? 5000 : 3000);
+
+  // Lenis smooth scroll
+  let lenis = null;
+  if(!isMobile && typeof Lenis !== 'undefined'){
+    lenis = new Lenis({ duration: 1.8, smooth: true });
+    function raf(t){ lenis.raf(t); requestAnimationFrame(raf); }
+    requestAnimationFrame(raf);
+  }
+
+  // GSAP ScrollTrigger
+  gsap.registerPlugin(ScrollTrigger);
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('ativo'); });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.blur, .scroll-left, .scroll-right, .scroll-top, .scroll-bottom').forEach(el => observer.observe(el));
+  document.querySelectorAll('.jornal-section').forEach(section => {
+    ScrollTrigger.create({ trigger: section, start: "top 85%", onEnter: () => section.classList.add('visible'), once: true });
+  });
+
+  // Canvas partículas
+  const canvas = document.getElementById('bg-canvas');
+  if(canvas){
+    const ctx = canvas.getContext('2d');
+    let w, h, particles = [];
+    const count = isMobile ? 20 : 60;
+    function resize(){
+      w = innerWidth; h = innerHeight; canvas.width = w; canvas.height = h;
+      particles = Array.from({length: count}, () => ({
+        x: Math.random()*w, y: Math.random()*h,
+        vx: (Math.random()-0.5)*0.2, vy: (Math.random()-0.5)*0.2,
+        r: Math.random()*2+1
+      }));
     }
-    images.forEach(img => {
-      if (img.complete) loadedImages++;
-      else {
-        img.addEventListener('load', imageLoaded);
-        img.addEventListener('error', imageLoaded);
+    resize(); window.addEventListener('resize', resize);
+    function draw(){
+      if(!ctx) return; ctx.clearRect(0,0,w,h);
+      for(let p of particles){
+        p.x+=p.vx; p.y+=p.vy;
+        if(p.x<0||p.x>w) p.vx*=-1; if(p.y<0||p.y>h) p.vy*=-1;
+        ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+        ctx.fillStyle='#A074FF'; ctx.fill();
+      }
+      requestAnimationFrame(draw);
+    }
+    draw();
+  }
+
+  // Mouse glow
+  if(!isMobile){
+    const glow = document.getElementById('mouse-glow');
+    if(glow){
+      glow.style.opacity = '1';
+      document.addEventListener('mousemove', e => {
+        glow.style.left = e.clientX + 'px';
+        glow.style.top = e.clientY + 'px';
+      });
+    }
+  }
+
+  // Modal Planos
+  const modal = document.getElementById('plansModal');
+  const openBtns = [document.getElementById('openPlansBtn'), document.getElementById('openPlansBtnHero')];
+  const closeModalFn = () => { modal.classList.remove('active'); document.body.style.overflow = ''; };
+  openBtns.forEach(btn => btn?.addEventListener('click', () => {
+    loadPlans();
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }));
+  document.getElementById('closeModalBtn')?.addEventListener('click', closeModalFn);
+  modal?.addEventListener('click', e => { if(e.target === modal) closeModalFn(); });
+
+  // Carregar planos do admin (localStorage)
+  function loadPlans(){
+    const grid = document.getElementById('plansGrid');
+    if(!grid) return;
+    const plans = JSON.parse(localStorage.getItem('techify_plans') || 'null') || defaultPlans();
+    grid.innerHTML = plans.map((p, i) => `
+      <div class="plan-card ${p.featured ? 'featured' : ''}">
+        ${p.featured ? '<div class="plan-badge">⭐ Mais popular</div>' : ''}
+        <h3 class="text-xl font-bold text-white mb-2">${p.name}</h3>
+        <div class="plan-price">R$ ${p.price}<span>/projeto</span></div>
+        <p class="text-gray-400 text-sm mt-2 mb-4">${p.description}</p>
+        <div class="space-y-1 mb-6">
+          ${p.features.map(f => `<div class="plan-feature"><i class="fas fa-check"></i>${f}</div>`).join('')}
+        </div>
+        <a href="https://wa.me/5581995498590?text=Olá! Tenho interesse no plano ${encodeURIComponent(p.name)}" target="_blank" class="btn-17 w-full justify-center"><span class="text-container"><span class="text">Contratar agora</span></span></a>
+      </div>
+    `).join('');
+  }
+
+  function defaultPlans(){
+    return [
+      { name: 'Starter', price: '1.497', description: 'Ideal para quem está começando', featured: false, features: ['Landing Page', 'Design exclusivo', 'Responsivo mobile', 'Formulário de contato', '1 revisão'] },
+      { name: 'Premium', price: '2.997', description: 'Para negócios em crescimento', featured: true, features: ['Site completo (até 5 páginas)', 'Design premium', 'SEO básico', 'Integração WhatsApp', 'Blog', '3 revisões', '3 meses suporte'] },
+      { name: 'Elite', price: '5.997', description: 'Para empresas que querem dominar', featured: false, features: ['Site completo (ilimitado)', 'Design ultra premium', 'SEO avançado', 'Automação IA', 'E-commerce', 'Revisões ilimitadas', '6 meses suporte', 'Gestão de tráfego'] }
+    ];
+  }
+
+  // Mobile menu
+  const hamburger = document.getElementById('hamburger');
+  const mobileNav = document.getElementById('mobileNav');
+  const closeMobile = document.getElementById('closeMobile');
+  hamburger?.addEventListener('click', () => mobileNav.classList.toggle('active'));
+  closeMobile?.addEventListener('click', () => mobileNav.classList.remove('active'));
+  document.querySelectorAll('.mobile-nav a').forEach(l => l.addEventListener('click', () => mobileNav.classList.remove('active')));
+
+  // Smooth scroll
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e){
+      const href = this.getAttribute('href');
+      if(href === "#") return;
+      const target = document.querySelector(href);
+      if(target){
+        e.preventDefault();
+        if(lenis) lenis.scrollTo(target, { offset: -80 });
+        else target.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
     });
-    if (images.length === 0) setTimeout(hidePreloader, 1000);
-    setTimeout(hidePreloader, isMobile ? 5000 : 3000);
-    
-    // Lenis apenas desktop
-    let lenis = null;
-    if (!isMobile && typeof Lenis !== 'undefined') {
-      lenis = new Lenis({ duration: 1.8, smooth: true });
-      function raf(time){ lenis.raf(time); requestAnimationFrame(raf); }
-      requestAnimationFrame(raf);
-    }
+  });
 
-    gsap.registerPlugin(ScrollTrigger);
-    const observer = new IntersectionObserver((entries) => { entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('ativo'); }); }, { threshold: 0.2 });
-    document.querySelectorAll('.blur, .scroll-left, .scroll-right').forEach(el => observer.observe(el));
-    document.querySelectorAll('.jornal-section').forEach(section => { ScrollTrigger.create({ trigger: section, start: "top 85%", onEnter: () => section.classList.add('visible'), once: true }); });
-
-    // Canvas partículas otimizado
-    const canvas = document.getElementById('bg-canvas');
-    if(canvas){
-      const ctx = canvas.getContext('2d');
-      let w, h, particles=[];
-      const particleCount = isMobile ? 20 : 60;
-      function resize(){ w = innerWidth; h = innerHeight; canvas.width = w; canvas.height = h; particles = Array.from({length: particleCount}, () => ({x: Math.random()*w, y: Math.random()*h, vx: (Math.random()-0.5)*0.2, vy: (Math.random()-0.5)*0.2, r: Math.random()*2+1})); }
-      resize(); window.addEventListener('resize', resize);
-      function draw(){ if(!ctx) return; ctx.clearRect(0,0,w,h); for(let p of particles){ p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>w) p.vx*=-1; if(p.y<0||p.y>h) p.vy*=-1; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle='#A074FF'; ctx.fill(); } requestAnimationFrame(draw); }
-      draw();
-    }
-
-    // Modal Planos
-    const modal = document.getElementById('plansModal');
-    const openBtns = [document.getElementById('openPlansBtn'), document.getElementById('openPlansBtnHero')];
-    const closeModal = () => { modal.classList.remove('active'); document.body.style.overflow = ''; };
-    openBtns.forEach(btn => btn?.addEventListener('click', () => { modal.classList.add('active'); document.body.style.overflow = 'hidden'; }));
-    document.getElementById('closeModalBtn')?.addEventListener('click', closeModal);
-    modal?.addEventListener('click', (e) => { if(e.target === modal) closeModal(); });
-
-    // Mobile menu
-    const hamburger = document.getElementById('hamburger');
-    const mobileNav = document.getElementById('mobileNav');
-    const closeMobile = document.getElementById('closeMobile');
-    function toggleMobile(){ mobileNav.classList.toggle('active'); }
-    hamburger?.addEventListener('click', toggleMobile);
-    closeMobile?.addEventListener('click', toggleMobile);
-    document.querySelectorAll('.mobile-nav a').forEach(link => link.addEventListener('click', () => mobileNav.classList.remove('active')));
-
-    // Smooth scroll
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function(e){
-        const href = this.getAttribute('href');
-        if(href === "#") return;
-        const target = document.querySelector(href);
-        if(target){ 
-          e.preventDefault(); 
-          if (lenis) lenis.scrollTo(target, { offset: -70 });
-          else target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          if(mobileNav.classList.contains('active')) mobileNav.classList.remove('active'); 
-        }
+  // Rating stars
+  const stars = document.querySelectorAll('.star');
+  let rating = 0;
+  stars.forEach(star => {
+    star.addEventListener('click', () => {
+      rating = parseInt(star.dataset.value);
+      stars.forEach(s => {
+        const v = parseInt(s.dataset.value);
+        s.classList.toggle('active', v <= rating);
+        s.classList.toggle('fas', v <= rating);
+        s.classList.toggle('far', v > rating);
       });
     });
+  });
 
-    // Feedback estrelas
-    let rating = 0;
-    const stars = document.querySelectorAll('.star');
-    stars.forEach(star => {
-      star.addEventListener('click', function(){
-        rating = parseInt(this.dataset.value);
-        stars.forEach((s,i) => { if(i < rating) s.classList.add('active'); else s.classList.remove('active'); });
-      });
-    });
-    document.getElementById('sendFeedback')?.addEventListener('click', () => {
-      const msg = document.getElementById('feedbackMessage').value;
-      if(!rating) return alert('Selecione uma avaliação');
-      alert(`Feedback enviado: ${rating} estrelas.\nMensagem: ${msg || "N/A"}`);
-    });
+  // Send feedback
+  document.getElementById('sendFeedback')?.addEventListener('click', () => {
+    const msg = document.getElementById('feedbackMessage').value;
+    if(!rating){ alert('Por favor, selecione uma avaliação!'); return; }
+    const feedbacks = JSON.parse(localStorage.getItem('techify_feedbacks') || '[]');
+    feedbacks.push({ rating, message: msg, date: new Date().toISOString() });
+    localStorage.setItem('techify_feedbacks', JSON.stringify(feedbacks));
+    alert('Obrigado pelo seu feedback! ⭐');
+    document.getElementById('feedbackMessage').value = '';
+    stars.forEach(s => { s.classList.remove('active','fas'); s.classList.add('far'); });
+    rating = 0;
+  });
 
-    document.querySelectorAll('img').forEach(img => img.setAttribute('draggable','false'));
-    
-    // Fan-out mobile
-    const servicesContainer = document.getElementById('servicesContainer');
-    if (servicesContainer) {
-      servicesContainer.addEventListener('touchstart', () => servicesContainer.classList.add('fan-out'), { passive: true });
-      servicesContainer.addEventListener('touchend', () => setTimeout(() => servicesContainer.classList.remove('fan-out'), 500));
-    }
-    
-    // Glow (desktop only)
-    const glow = document.getElementById('mouse-glow');
-    if (glow && !isMobile) {
-      document.addEventListener('mousemove', (e) => { glow.style.left = e.clientX + 'px'; glow.style.top = e.clientY + 'px'; glow.style.opacity = 1; });
-      document.addEventListener('mouseleave', () => glow.style.opacity = 0);
-    }
-    
-    // Tilt mobile
+  // Tilt effect
+  if(!isMobile){
     document.querySelectorAll('.tilt-card').forEach(card => {
-      card.addEventListener('touchstart', () => card.classList.add('tilt-active'), { passive: true });
-      card.addEventListener('touchend', () => setTimeout(() => card.classList.remove('tilt-active'), 200));
+      card.addEventListener('mousemove', e => {
+        const rect = card.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        card.style.transform = `perspective(1000px) rotateX(${-y*8}deg) rotateY(${x*8}deg)`;
+        card.classList.add('tilt-active');
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg)';
+        card.classList.remove('tilt-active');
+      });
     });
-    
-    if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
-      document.body.style.minHeight = '-webkit-fill-available';
-    }
-  })();
+  }
+
+  // Selecionado animation
+  const selecionado = document.querySelector('.selecionado');
+  if(selecionado){
+    ScrollTrigger.create({
+      trigger: selecionado, start: "top 80%", end: "top 20%",
+      onUpdate: self => selecionado.style.setProperty('--bg-position', (self.progress * 100) + '%')
+    });
+  }
+})();
 </script>
 </body>
 </html>
