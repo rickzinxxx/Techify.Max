@@ -4,1339 +4,256 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Techify.Max — Painel Admin</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg: #030305;
-      --bg2: #0A0A10;
-      --bg3: #12121A;
-      --border: rgba(255,255,255,0.07);
-      --purple: #9061EE;
-      --purple-light: #A074FF;
-      --green: #CEFF66;
-      --text: #e2e8f0;
-      --text-muted: #64748b;
-      --sidebar-w: 260px;
-    }
-    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-
-    /* ===== LOGIN ===== */
-    #loginScreen {
-      position: fixed; inset: 0; background: var(--bg);
-      display: flex; align-items: center; justify-content: center; z-index: 9999;
-    }
-    .login-card {
-      background: var(--bg3); border: 1px solid var(--border);
-      border-radius: 24px; padding: 2.5rem; width: 100%; max-width: 400px;
-      box-shadow: 0 30px 80px rgba(0,0,0,0.5);
-    }
-    .login-logo {
-      font-size: 1.8rem; font-weight: 800;
-      background: linear-gradient(135deg, #fff 0%, #C1FF72 50%, #A074FF 100%);
-      -webkit-background-clip: text; background-clip: text; color: transparent;
-      text-align: center; margin-bottom: 0.5rem;
-    }
-    .login-subtitle { text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem; }
-    .form-group { margin-bottom: 1.2rem; }
-    .form-label { display: block; font-size: 0.85rem; font-weight: 500; color: #94a3b8; margin-bottom: 6px; }
-    .form-input {
-      width: 100%; background: var(--bg2); border: 1px solid var(--border);
-      border-radius: 12px; padding: 0.75rem 1rem; color: var(--text); font-size: 0.9rem;
-      transition: border-color 0.2s;
-    }
-    .form-input:focus { outline: none; border-color: var(--purple); }
-    .btn-primary {
-      width: 100%; background: linear-gradient(135deg, var(--purple), var(--purple-light));
-      color: white; font-weight: 700; padding: 0.85rem; border-radius: 12px;
-      border: none; cursor: pointer; font-size: 0.95rem; transition: opacity 0.2s;
-    }
-    .btn-primary:hover { opacity: 0.9; }
-    .login-error { color: #f87171; font-size: 0.85rem; text-align: center; margin-top: 0.8rem; display: none; }
-
-    /* ===== LAYOUT ===== */
-    #adminApp { display: none; min-height: 100vh; }
-    .sidebar {
-      position: fixed; left: 0; top: 0; bottom: 0; width: var(--sidebar-w);
-      background: var(--bg2); border-right: 1px solid var(--border);
-      display: flex; flex-direction: column; z-index: 100; overflow-y: auto;
-    }
-    .sidebar-logo {
-      padding: 1.5rem; border-bottom: 1px solid var(--border);
-      font-size: 1.3rem; font-weight: 800;
-      background: linear-gradient(135deg, #fff 0%, #C1FF72 50%, #A074FF 100%);
-      -webkit-background-clip: text; background-clip: text; color: transparent;
-    }
-    .sidebar-section { padding: 1rem 0.75rem 0.5rem; font-size: 0.7rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; }
-    .nav-item {
-      display: flex; align-items: center; gap: 10px; padding: 0.65rem 1rem;
-      border-radius: 10px; margin: 2px 0.5rem; cursor: pointer;
-      color: #94a3b8; font-size: 0.88rem; font-weight: 500;
-      transition: background 0.2s, color 0.2s;
-    }
-    .nav-item:hover { background: rgba(144,97,238,0.1); color: var(--text); }
-    .nav-item.active { background: rgba(144,97,238,0.15); color: var(--purple-light); }
-    .nav-item i { width: 18px; text-align: center; }
-    .sidebar-footer {
-      margin-top: auto; padding: 1rem; border-top: 1px solid var(--border);
-    }
-    .logout-btn {
-      display: flex; align-items: center; gap: 8px; color: #f87171;
-      font-size: 0.85rem; cursor: pointer; padding: 0.5rem;
-      border-radius: 8px; transition: background 0.2s;
-    }
-    .logout-btn:hover { background: rgba(248,113,113,0.1); }
-
-    /* ===== MAIN CONTENT ===== */
-    .main-content { margin-left: var(--sidebar-w); min-height: 100vh; }
-    .topbar {
-      background: var(--bg2); border-bottom: 1px solid var(--border);
-      padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between;
-      position: sticky; top: 0; z-index: 50;
-    }
-    .topbar-title { font-size: 1.1rem; font-weight: 700; color: var(--text); }
-    .topbar-right { display: flex; align-items: center; gap: 12px; }
-    .topbar-badge {
-      background: rgba(144,97,238,0.15); border: 1px solid rgba(144,97,238,0.3);
-      border-radius: 99px; padding: 0.3rem 0.8rem; font-size: 0.75rem; color: #c4b5fd;
-    }
-    .page-content { padding: 2rem; }
-
-    /* ===== TABS ===== */
-    .tab-panel { display: none; }
-    .tab-panel.active { display: block; }
-
-    /* ===== CARDS ===== */
-    .card {
-      background: var(--bg3); border: 1px solid var(--border);
-      border-radius: 16px; padding: 1.5rem;
-    }
-    .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
-    .card-title { font-size: 1rem; font-weight: 700; color: var(--text); }
-
-    /* ===== STAT CARDS ===== */
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
-    .stat-card {
-      background: var(--bg3); border: 1px solid var(--border);
-      border-radius: 16px; padding: 1.5rem; position: relative; overflow: hidden;
-    }
-    .stat-card::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, var(--purple), var(--green));
-    }
-    .stat-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; font-size: 1.1rem; }
-    .stat-value { font-size: 2rem; font-weight: 800; color: var(--text); }
-    .stat-label { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; }
-    .stat-change { font-size: 0.75rem; font-weight: 600; margin-top: 8px; }
-    .stat-change.up { color: #4ade80; }
-    .stat-change.down { color: #f87171; }
-
-    /* ===== TABLE ===== */
-    .table-wrapper { overflow-x: auto; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #030305; color: #fff; overflow-x: hidden; }
+    .admin-container { display: grid; grid-template-columns: 250px 1fr; min-height: 100vh; }
+    .sidebar { background: rgba(10,10,15,0.9); border-right: 1px solid rgba(144,97,238,0.2); padding: 2rem 1rem; position: fixed; left: 0; top: 0; height: 100vh; width: 250px; overflow-y: auto; }
+    .sidebar-logo { font-size: 1.3rem; font-weight: 700; background: linear-gradient(135deg, #9061EE, #00D4FF); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 2rem; text-align: center; }
+    .sidebar-menu { list-style: none; }
+    .sidebar-link { display: flex; align-items: center; gap: 0.8rem; padding: 0.8rem 1rem; color: #aaa; text-decoration: none; border-radius: 8px; cursor: pointer; transition: 0.3s; border: 1px solid transparent; margin-bottom: 0.5rem; }
+    .sidebar-link:hover, .sidebar-link.active { background: rgba(144,97,238,0.2); color: #9061EE; border-color: rgba(144,97,238,0.4); }
+    .main-content { margin-left: 250px; padding: 2rem; }
+    .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; background: rgba(144,97,238,0.08); padding: 1rem; border-radius: 12px; border: 1px solid rgba(144,97,238,0.2); }
+    .btn { padding: 0.7rem 1.5rem; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.3s; font-size: 0.9rem; }
+    .btn-primary { background: linear-gradient(135deg, #9061EE, #6c2bff); color: white; }
+    .btn-secondary { background: rgba(144,97,238,0.2); color: #9061EE; border: 1px solid rgba(144,97,238,0.4); }
+    .btn-danger { background: rgba(255,0,0,0.2); color: #ff4444; border: 1px solid rgba(255,0,0,0.4); }
+    .content-section { display: none; }
+    .content-section.active { display: block; }
+    .card { background: rgba(144,97,238,0.08); border: 1px solid rgba(144,97,238,0.2); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; }
+    .form-group input, .form-group textarea { width: 100%; padding: 0.7rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(144,97,238,0.3); border-radius: 8px; color: white; }
     table { width: 100%; border-collapse: collapse; }
-    th { text-align: left; padding: 0.75rem 1rem; font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border); }
-    td { padding: 0.9rem 1rem; font-size: 0.875rem; border-bottom: 1px solid rgba(255,255,255,0.04); }
-    tr:hover td { background: rgba(255,255,255,0.02); }
-    .badge { display: inline-flex; align-items: center; gap: 4px; padding: 0.2rem 0.6rem; border-radius: 99px; font-size: 0.7rem; font-weight: 600; }
-    .badge-green { background: rgba(74,222,128,0.1); color: #4ade80; border: 1px solid rgba(74,222,128,0.2); }
-    .badge-yellow { background: rgba(250,204,21,0.1); color: #facc15; border: 1px solid rgba(250,204,21,0.2); }
-    .badge-red { background: rgba(248,113,113,0.1); color: #f87171; border: 1px solid rgba(248,113,113,0.2); }
-    .badge-purple { background: rgba(144,97,238,0.1); color: var(--purple-light); border: 1px solid rgba(144,97,238,0.2); }
-
-    /* ===== BUTTONS ===== */
-    .btn { padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer; border: none; transition: opacity 0.2s; }
-    .btn:hover { opacity: 0.85; }
-    .btn-sm { padding: 0.35rem 0.75rem; font-size: 0.78rem; }
-    .btn-purple { background: var(--purple); color: white; }
-    .btn-green { background: #22c55e; color: white; }
-    .btn-red { background: #ef4444; color: white; }
-    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
-    .btn-outline:hover { border-color: var(--purple); }
-
-    /* ===== FORM ELEMENTS ===== */
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
-    .form-row.full { grid-template-columns: 1fr; }
-    textarea.form-input { resize: vertical; min-height: 80px; }
-    select.form-input { cursor: pointer; }
-    .form-actions { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.5rem; }
-
-    /* ===== MODAL ===== */
-    .modal-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.7);
-      backdrop-filter: blur(8px); z-index: 500;
-      display: flex; align-items: center; justify-content: center;
-      opacity: 0; visibility: hidden; transition: opacity 0.2s, visibility 0.2s;
-    }
-    .modal-overlay.open { opacity: 1; visibility: visible; }
-    .modal-box {
-      background: var(--bg3); border: 1px solid var(--border);
-      border-radius: 20px; padding: 2rem; width: 100%; max-width: 560px;
-      max-height: 90vh; overflow-y: auto; margin: 1rem;
-    }
-    .modal-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 1.5rem; }
-    .modal-close { float: right; cursor: pointer; color: var(--text-muted); font-size: 1.2rem; }
-    .modal-close:hover { color: var(--text); }
-
-    /* ===== TOAST ===== */
-    #toast {
-      position: fixed; bottom: 2rem; right: 2rem; z-index: 9999;
-      background: var(--bg3); border: 1px solid var(--border);
-      border-radius: 12px; padding: 1rem 1.5rem;
-      display: flex; align-items: center; gap: 10px;
-      transform: translateY(100px); opacity: 0;
-      transition: transform 0.3s, opacity 0.3s;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    }
-    #toast.show { transform: translateY(0); opacity: 1; }
-    #toast.success { border-left: 3px solid #4ade80; }
-    #toast.error { border-left: 3px solid #f87171; }
-
-    /* ===== PROJETOS GRID ===== */
-    .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
-    .project-item {
-      background: var(--bg2); border: 1px solid var(--border);
-      border-radius: 14px; overflow: hidden;
-    }
-    .project-item img { width: 100%; height: 160px; object-fit: cover; }
-    .project-item-body { padding: 1rem; }
-    .project-item-title { font-weight: 700; margin-bottom: 4px; }
-    .project-item-desc { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem; }
-    .project-item-actions { display: flex; gap: 0.5rem; }
-
-    /* ===== PLANOS ===== */
-    .plans-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
-    .plan-item {
-      background: var(--bg2); border: 1px solid var(--border);
-      border-radius: 14px; padding: 1.25rem; position: relative;
-    }
-    .plan-item.featured { border-color: rgba(144,97,238,0.4); }
-    .plan-item-name { font-weight: 700; font-size: 1rem; margin-bottom: 4px; }
-    .plan-item-price { font-size: 1.5rem; font-weight: 800; color: var(--purple-light); margin-bottom: 8px; }
-    .plan-item-features { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem; }
-    .plan-item-actions { display: flex; gap: 0.5rem; }
-
-    /* ===== FEEDBACKS ===== */
-    .feedback-item {
-      background: var(--bg2); border: 1px solid var(--border);
-      border-radius: 12px; padding: 1rem; margin-bottom: 0.75rem;
-    }
-    .feedback-stars { color: #facc15; font-size: 0.9rem; margin-bottom: 6px; }
-    .feedback-msg { font-size: 0.875rem; color: var(--text); margin-bottom: 6px; }
-    .feedback-date { font-size: 0.75rem; color: var(--text-muted); }
-
-    /* ===== CONFIGURAÇÕES ===== */
-    .config-section { margin-bottom: 2rem; }
-    .config-section-title { font-size: 0.9rem; font-weight: 700; color: var(--text); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
-
-    /* ===== ACTIVITY LOG ===== */
-    .activity-item { display: flex; gap: 12px; padding: 0.75rem 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
-    .activity-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--purple); margin-top: 6px; flex-shrink: 0; }
-    .activity-text { font-size: 0.85rem; color: var(--text); }
-    .activity-time { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
-
-    /* ===== CHART PLACEHOLDER ===== */
-    .chart-bar-container { display: flex; align-items: flex-end; gap: 8px; height: 120px; padding: 0 0.5rem; }
-    .chart-bar { flex: 1; border-radius: 6px 6px 0 0; background: linear-gradient(to top, var(--purple), var(--purple-light)); opacity: 0.8; transition: opacity 0.2s; }
-    .chart-bar:hover { opacity: 1; }
-    .chart-labels { display: flex; gap: 8px; padding: 0.5rem 0.5rem 0; }
-    .chart-label { flex: 1; text-align: center; font-size: 0.7rem; color: var(--text-muted); }
-
-    /* ===== RESPONSIVE ===== */
-    @media (max-width: 768px) {
-      .sidebar { transform: translateX(-100%); transition: transform 0.3s; }
-      .sidebar.open { transform: translateX(0); }
-      .main-content { margin-left: 0; }
-      .form-row { grid-template-columns: 1fr; }
-      .mobile-menu-btn { display: flex !important; }
-    }
-    .mobile-menu-btn { display: none; align-items: center; justify-content: center; width: 36px; height: 36px; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; cursor: pointer; }
-
-    /* ===== EMPTY STATE ===== */
-    .empty-state { text-align: center; padding: 3rem; color: var(--text-muted); }
-    .empty-state i { font-size: 2.5rem; margin-bottom: 1rem; opacity: 0.4; }
-    .empty-state p { font-size: 0.9rem; }
-
-    /* ===== SWITCH ===== */
-    .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
-    .switch input { opacity: 0; width: 0; height: 0; }
-    .slider { position: absolute; cursor: pointer; inset: 0; background: #374151; border-radius: 24px; transition: 0.3s; }
-    .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.3s; }
-    input:checked + .slider { background: var(--purple); }
-    input:checked + .slider:before { transform: translateX(20px); }
+    th { background: rgba(144,97,238,0.2); padding: 1rem; text-align: left; border-bottom: 2px solid rgba(144,97,238,0.3); }
+    td { padding: 1rem; border-bottom: 1px solid rgba(144,97,238,0.1); }
+    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; }
+    .modal.active { display: flex; }
+    .modal-content { background: #0a0a0f; border: 1px solid rgba(144,97,238,0.3); border-radius: 12px; padding: 2rem; width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .stat-card { background: rgba(144,97,238,0.1); border: 1px solid rgba(144,97,238,0.3); padding: 1.5rem; border-radius: 12px; text-align: center; }
+    .stat-number { font-size: 2rem; font-weight: 700; color: #9061EE; }
+    @media (max-width: 768px) { .admin-container { grid-template-columns: 1fr; } .sidebar { width: 100%; height: auto; position: relative; } .main-content { margin-left: 0; } }
   </style>
 </head>
 <body>
+  <div class="admin-container">
+    <aside class="sidebar">
+      <div class="sidebar-logo">Techify.Max</div>
+      <ul class="sidebar-menu">
+        <li><a class="sidebar-link active" onclick="showSection('dashboard')"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+        <li><a class="sidebar-link" onclick="showSection('leads')"><i class="fas fa-envelope"></i> Leads</a></li>
+        <li><a class="sidebar-link" onclick="showSection('servicos')"><i class="fas fa-cogs"></i> Serviços</a></li>
+        <li><a class="sidebar-link" onclick="showSection('cases')"><i class="fas fa-star"></i> Cases</a></li>
+        <li><a class="sidebar-link" onclick="showSection('planos')"><i class="fas fa-tag"></i> Planos</a></li>
+        <li><a class="sidebar-link" onclick="showSection('sobre')"><i class="fas fa-user"></i> Sobre</a></li>
+        <li><a class="sidebar-link" onclick="showSection('configuracoes')"><i class="fas fa-sliders-h"></i> Configurações</a></li>
+        <li><a class="sidebar-link" onclick="logout()" style="color: #ff4444;"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+      </ul>
+    </aside>
 
-<!-- ===== LOGIN ===== -->
-<div id="loginScreen">
-  <div class="login-card">
-    <div class="login-logo">Techify.Max</div>
-    <div class="login-subtitle">Painel de Administração</div>
-    <div class="form-group">
-      <label class="form-label">Usuário</label>
-      <input type="text" id="loginUser" class="form-input" placeholder="admin" autocomplete="username">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Senha</label>
-      <input type="password" id="loginPass" class="form-input" placeholder="••••••••" autocomplete="current-password">
-    </div>
-    <button class="btn-primary" onclick="doLogin()"><i class="fas fa-sign-in-alt mr-2"></i>Entrar</button>
-    <div class="login-error" id="loginError">Usuário ou senha incorretos.</div>
-    <p style="text-align:center;font-size:0.75rem;color:#475569;margin-top:1rem">Credenciais padrão: admin / techify2026</p>
-  </div>
-</div>
-
-<!-- ===== ADMIN APP ===== -->
-<div id="adminApp">
-  <!-- Sidebar -->
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-logo">Techify.Max</div>
-    <div style="padding: 0.75rem 0.5rem;">
-      <div class="sidebar-section">Principal</div>
-      <div class="nav-item active" onclick="showTab('dashboard', this)"><i class="fas fa-chart-pie"></i>Dashboard</div>
-      <div class="sidebar-section">Conteúdo</div>
-      <div class="nav-item" onclick="showTab('projetos', this)"><i class="fas fa-folder-open"></i>Projetos</div>
-      <div class="nav-item" onclick="showTab('planos', this)"><i class="fas fa-tags"></i>Planos</div>
-      <div class="nav-item" onclick="showTab('cases', this)"><i class="fas fa-users"></i>Cases</div>
-      <div class="nav-item" onclick="showTab('depoimentos', this)"><i class="fas fa-images"></i>Depoimentos</div>
-      <div class="sidebar-section">Dados</div>
-      <div class="nav-item" onclick="showTab('feedbacks', this)"><i class="fas fa-star"></i>Feedbacks</div>
-      <div class="nav-item" onclick="showTab('leads', this)"><i class="fas fa-envelope"></i>Leads</div>
-      <div class="sidebar-section">Sistema</div>
-      <div class="nav-item" onclick="showTab('configuracoes', this)"><i class="fas fa-cog"></i>Configurações</div>
-    </div>
-    <div class="sidebar-footer">
-      <div class="logout-btn" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i>Sair</div>
-    </div>
-  </aside>
-
-  <!-- Main -->
-  <div class="main-content">
-    <!-- Topbar -->
-    <div class="topbar">
-      <div style="display:flex;align-items:center;gap:12px">
-        <div class="mobile-menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">
-          <i class="fas fa-bars" style="color:var(--text);font-size:0.9rem"></i>
-        </div>
-        <div class="topbar-title" id="topbarTitle">Dashboard</div>
-      </div>
-      <div class="topbar-right">
-        <div class="topbar-badge"><i class="fas fa-circle" style="color:#4ade80;font-size:0.5rem"></i> Online</div>
-        <a href="index.html" target="_blank" class="btn btn-outline btn-sm"><i class="fas fa-external-link-alt mr-1"></i>Ver site</a>
-      </div>
-    </div>
-
-    <!-- Page Content -->
-    <div class="page-content">
-
-      <!-- ===== DASHBOARD ===== -->
-      <div id="tab-dashboard" class="tab-panel active">
+    <main class="main-content">
+      <!-- DASHBOARD -->
+      <section id="dashboard" class="content-section active">
+        <div class="top-bar"><h1>Dashboard</h1><a href="index.html" target="_blank" class="btn btn-secondary">Ver Site</a></div>
         <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-icon" style="background:rgba(144,97,238,0.15)"><i class="fas fa-folder" style="color:var(--purple-light)"></i></div>
-            <div class="stat-value" id="stat-projetos">0</div>
-            <div class="stat-label">Projetos cadastrados</div>
-            <div class="stat-change up"><i class="fas fa-arrow-up"></i> Ativo</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon" style="background:rgba(206,255,102,0.1)"><i class="fas fa-star" style="color:var(--green)"></i></div>
-            <div class="stat-value" id="stat-feedbacks">0</div>
-            <div class="stat-label">Feedbacks recebidos</div>
-            <div class="stat-change up" id="stat-rating">— estrelas</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon" style="background:rgba(74,222,128,0.1)"><i class="fas fa-tags" style="color:#4ade80"></i></div>
-            <div class="stat-value" id="stat-planos">0</div>
-            <div class="stat-label">Planos ativos</div>
-            <div class="stat-change up"><i class="fas fa-check"></i> Publicados</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon" style="background:rgba(251,191,36,0.1)"><i class="fas fa-envelope" style="color:#fbbf24"></i></div>
-            <div class="stat-value" id="stat-leads">0</div>
-            <div class="stat-label">Leads capturados</div>
-            <div class="stat-change up"><i class="fas fa-arrow-up"></i> Total</div>
-          </div>
+          <div class="stat-card"><div class="stat-number" id="totalLeads">0</div><div class="stat-label">Leads</div></div>
+          <div class="stat-card"><div class="stat-number" id="totalCases">0</div><div class="stat-label">Cases</div></div>
+          <div class="stat-card"><div class="stat-number" id="totalServicos">0</div><div class="stat-label">Serviços</div></div>
         </div>
+        <div class="card"><h3>Atividade Recente</h3><div id="recentActivity"><p>Nenhuma atividade ainda.</p></div></div>
+      </section>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
-          <!-- Atividade recente -->
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title"><i class="fas fa-history mr-2" style="color:var(--purple)"></i>Atividade Recente</div>
-            </div>
-            <div id="activityLog">
-              <div class="empty-state"><i class="fas fa-clock"></i><p>Nenhuma atividade ainda</p></div>
-            </div>
-          </div>
+      <!-- LEADS -->
+      <section id="leads" class="content-section">
+        <div class="top-bar"><h1>Leads Capturados</h1><div class="flex gap-2"><button onclick="exportLeadsCSV()" class="btn btn-secondary">Exportar CSV</button><button onclick="clearLeads()" class="btn btn-danger">Limpar Tudo</button></div></div>
+        <div class="card"><div class="table-container"><table><thead><tr><th>Nome</th><th>WhatsApp</th><th>Interesse</th><th>Avaliação</th><th>Data</th><th>Ações</th></tr></thead><tbody id="leadsTable"></tbody></table></div></div>
+      </section>
 
-          <!-- Feedbacks recentes -->
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title"><i class="fas fa-star mr-2" style="color:#facc15"></i>Feedbacks Recentes</div>
-              <button class="btn btn-outline btn-sm" onclick="showTab('feedbacks', null)">Ver todos</button>
-            </div>
-            <div id="recentFeedbacks">
-              <div class="empty-state"><i class="fas fa-star"></i><p>Nenhum feedback ainda</p></div>
-            </div>
-          </div>
-        </div>
+      <!-- SERVIÇOS -->
+      <section id="servicos" class="content-section">
+        <div class="top-bar"><h1>Serviços</h1><button onclick="openServiceModal()" class="btn btn-primary">Novo Serviço</button></div>
+        <div id="servicesContainer"></div>
+      </section>
 
-        <!-- Gráfico de feedbacks por estrela -->
-        <div class="card" style="margin-top:1.5rem">
-          <div class="card-header">
-            <div class="card-title"><i class="fas fa-chart-bar mr-2" style="color:var(--purple)"></i>Distribuição de Avaliações</div>
-          </div>
-          <div class="chart-bar-container" id="ratingChart">
-            <div class="chart-bar" style="height:20%" title="1 estrela"></div>
-            <div class="chart-bar" style="height:20%" title="2 estrelas"></div>
-            <div class="chart-bar" style="height:20%" title="3 estrelas"></div>
-            <div class="chart-bar" style="height:20%" title="4 estrelas"></div>
-            <div class="chart-bar" style="height:20%" title="5 estrelas"></div>
-          </div>
-          <div class="chart-labels">
-            <div class="chart-label">★</div>
-            <div class="chart-label">★★</div>
-            <div class="chart-label">★★★</div>
-            <div class="chart-label">★★★★</div>
-            <div class="chart-label">★★★★★</div>
-          </div>
-        </div>
-      </div>
+      <!-- CASES -->
+      <section id="cases" class="content-section">
+        <div class="top-bar"><h1>Cases de Sucesso</h1><button onclick="openCaseModal()" class="btn btn-primary">Novo Case</button></div>
+        <div id="casesContainer"></div>
+      </section>
 
-      <!-- ===== PROJETOS ===== -->
-      <div id="tab-projetos" class="tab-panel">
+      <!-- PLANOS -->
+      <section id="planos" class="content-section">
+        <div class="top-bar"><h1>Planos</h1><button onclick="openPlanModal()" class="btn btn-primary">Novo Plano</button></div>
+        <div id="plansContainer"></div>
+      </section>
+
+      <!-- SOBRE -->
+      <section id="sobre" class="content-section">
+        <div class="top-bar"><h1>Sobre Mim</h1></div>
         <div class="card">
-          <div class="card-header">
-            <div class="card-title"><i class="fas fa-folder-open mr-2" style="color:var(--purple)"></i>Gerenciar Projetos</div>
-            <button class="btn btn-purple" onclick="openModal('modalProjeto')"><i class="fas fa-plus mr-1"></i>Novo Projeto</button>
-          </div>
-          <div class="projects-grid" id="projetosGrid">
-            <div class="empty-state" style="grid-column:1/-1"><i class="fas fa-folder-open"></i><p>Nenhum projeto cadastrado</p></div>
-          </div>
+          <form id="aboutForm">
+            <div class="form-group"><label>Nome</label><input type="text" id="aboutName"></div>
+            <div class="form-group"><label>Bio</label><textarea id="aboutBio"></textarea></div>
+            <div class="form-group"><label>Foto (URL ou nome do arquivo)</label><input type="text" id="aboutPhoto"></div>
+            <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+          </form>
         </div>
-      </div>
+      </section>
 
-      <!-- ===== PLANOS ===== -->
-      <div id="tab-planos" class="tab-panel">
+      <!-- CONFIGURAÇÕES -->
+      <section id="configuracoes" class="content-section">
+        <div class="top-bar"><h1>Configurações</h1></div>
         <div class="card">
-          <div class="card-header">
-            <div class="card-title"><i class="fas fa-tags mr-2" style="color:var(--purple)"></i>Gerenciar Planos</div>
-            <button class="btn btn-purple" onclick="openModal('modalPlano')"><i class="fas fa-plus mr-1"></i>Novo Plano</button>
-          </div>
-          <div class="plans-list" id="planosGrid">
-            <div class="empty-state" style="grid-column:1/-1"><i class="fas fa-tags"></i><p>Nenhum plano cadastrado</p></div>
-          </div>
+          <form id="settingsForm">
+            <div class="form-group"><label>Nome do Site</label><input type="text" id="siteName"></div>
+            <div class="form-group"><label>WhatsApp</label><input type="text" id="siteWhatsapp"></div>
+            <button type="submit" class="btn btn-primary">Salvar</button>
+          </form>
         </div>
-      </div>
-
-      <!-- ===== CASES ===== -->
-      <div id="tab-cases" class="tab-panel">
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title"><i class="fas fa-users mr-2" style="color:var(--purple)"></i>Cases de Sucesso</div>
-            <button class="btn btn-purple" onclick="openModal('modalCase')"><i class="fas fa-plus mr-1"></i>Novo Case</button>
-          </div>
-          <div class="table-wrapper">
-            <table>
-              <thead>
-                <tr>
-                  <th>Nome</th>
-                  <th>Handle</th>
-                  <th>Seguidores</th>
-                  <th>Descrição</th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
-              <tbody id="casesTable">
-                <tr><td colspan="5" class="empty-state"><i class="fas fa-users"></i><p>Nenhum case cadastrado</p></td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- ===== DEPOIMENTOS ===== -->
-      <div id="tab-depoimentos" class="tab-panel">
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title"><i class="fas fa-images mr-2" style="color:var(--purple)"></i>Depoimentos</div>
-            <button class="btn btn-purple" onclick="openModal('modalDepoimento')"><i class="fas fa-plus mr-1"></i>Novo Depoimento</button>
-          </div>
-          <div class="projects-grid" id="depoimentosGrid">
-            <div class="empty-state" style="grid-column:1/-1"><i class="fas fa-images"></i><p>Nenhum depoimento cadastrado</p></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ===== FEEDBACKS ===== -->
-      <div id="tab-feedbacks" class="tab-panel">
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title"><i class="fas fa-star mr-2" style="color:#facc15"></i>Feedbacks dos Visitantes</div>
-            <button class="btn btn-red btn-sm" onclick="clearFeedbacks()"><i class="fas fa-trash mr-1"></i>Limpar todos</button>
-          </div>
-          <div id="feedbacksList">
-            <div class="empty-state"><i class="fas fa-star"></i><p>Nenhum feedback recebido ainda</p></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ===== LEADS ===== -->
-      <div id="tab-leads" class="tab-panel">
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title"><i class="fas fa-envelope mr-2" style="color:#fbbf24"></i>Leads Capturados</div>
-            <div style="display:flex;gap:0.5rem">
-              <button class="btn btn-outline btn-sm" onclick="exportLeads()"><i class="fas fa-download mr-1"></i>Exportar CSV</button>
-              <button class="btn btn-red btn-sm" onclick="clearLeads()"><i class="fas fa-trash mr-1"></i>Limpar</button>
-            </div>
-          </div>
-          <div class="table-wrapper">
-            <table>
-              <thead>
-                <tr><th>Nome</th><th>Email</th><th>WhatsApp</th><th>Interesse</th><th>Data</th><th>Ações</th></tr>
-              </thead>
-              <tbody id="leadsTable">
-                <tr><td colspan="6"><div class="empty-state"><i class="fas fa-envelope"></i><p>Nenhum lead ainda</p></div></td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <!-- Formulário para adicionar lead manualmente -->
-        <div class="card" style="margin-top:1.5rem">
-          <div class="card-header">
-            <div class="card-title"><i class="fas fa-user-plus mr-2" style="color:var(--purple)"></i>Adicionar Lead Manualmente</div>
-          </div>
-          <div class="form-row">
-            <div class="form-group"><label class="form-label">Nome</label><input type="text" id="leadNome" class="form-input" placeholder="Nome do lead"></div>
-            <div class="form-group"><label class="form-label">Email</label><input type="email" id="leadEmail" class="form-input" placeholder="email@exemplo.com"></div>
-          </div>
-          <div class="form-row">
-            <div class="form-group"><label class="form-label">WhatsApp</label><input type="text" id="leadWpp" class="form-input" placeholder="(81) 99999-9999"></div>
-            <div class="form-group"><label class="form-label">Interesse</label>
-              <select id="leadInteresse" class="form-input">
-                <option value="Site">Site</option>
-                <option value="Design">Design</option>
-                <option value="Social Media">Social Media</option>
-                <option value="Automação IA">Automação IA</option>
-                <option value="Identidade Visual">Identidade Visual</option>
-                <option value="Outro">Outro</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-actions">
-            <button class="btn btn-purple" onclick="addLead()"><i class="fas fa-plus mr-1"></i>Adicionar Lead</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- ===== CONFIGURAÇÕES ===== -->
-      <div id="tab-configuracoes" class="tab-panel">
-        <div class="config-section">
-          <div class="config-section-title"><i class="fas fa-globe mr-2" style="color:var(--purple)"></i>Informações do Site</div>
-          <div class="card">
-            <div class="form-row">
-              <div class="form-group"><label class="form-label">Nome do site</label><input type="text" id="cfg-sitename" class="form-input" value="Techify.Max"></div>
-              <div class="form-group"><label class="form-label">WhatsApp</label><input type="text" id="cfg-whatsapp" class="form-input" value="5581995498590"></div>
-            </div>
-            <div class="form-row">
-              <div class="form-group"><label class="form-label">Instagram</label><input type="text" id="cfg-instagram" class="form-input" value="@techify.max"></div>
-              <div class="form-group"><label class="form-label">Email</label><input type="email" id="cfg-email" class="form-input" placeholder="contato@techify.max"></div>
-            </div>
-            <div class="form-row full">
-              <div class="form-group"><label class="form-label">Slogan</label><input type="text" id="cfg-slogan" class="form-input" value="Um design premium para quem busca exclusividade"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="config-section">
-          <div class="config-section-title"><i class="fas fa-user mr-2" style="color:var(--purple)"></i>Sobre o Webdesigner</div>
-          <div class="card">
-            <div class="form-row">
-              <div class="form-group"><label class="form-label">Nome</label><input type="text" id="cfg-nome" class="form-input" value="Marcos Henrique"></div>
-              <div class="form-group"><label class="form-label">Idade</label><input type="number" id="cfg-idade" class="form-input" value="19"></div>
-            </div>
-            <div class="form-row full">
-              <div class="form-group"><label class="form-label">Bio</label><textarea id="cfg-bio" class="form-input" rows="3">Tenho 19 anos e empreendo desde os 16. Webdesigner especializado em criar experiências digitais de alto impacto.</textarea></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="config-section">
-          <div class="config-section-title"><i class="fas fa-lock mr-2" style="color:var(--purple)"></i>Segurança</div>
-          <div class="card">
-            <div class="form-row">
-              <div class="form-group"><label class="form-label">Nova senha</label><input type="password" id="cfg-newpass" class="form-input" placeholder="Nova senha"></div>
-              <div class="form-group"><label class="form-label">Confirmar senha</label><input type="password" id="cfg-confirmpass" class="form-input" placeholder="Confirmar senha"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="config-section">
-          <div class="config-section-title"><i class="fas fa-database mr-2" style="color:var(--purple)"></i>Banco de Dados</div>
-          <div class="card">
-            <div style="display:flex;gap:1rem;flex-wrap:wrap">
-              <button class="btn btn-outline" onclick="exportDB()"><i class="fas fa-download mr-1"></i>Exportar dados (JSON)</button>
-              <button class="btn btn-outline" onclick="document.getElementById('importFile').click()"><i class="fas fa-upload mr-1"></i>Importar dados</button>
-              <input type="file" id="importFile" accept=".json" style="display:none" onchange="importDB(this)">
-              <button class="btn btn-red" onclick="resetDB()"><i class="fas fa-trash mr-1"></i>Resetar banco de dados</button>
-            </div>
-            <div style="margin-top:1rem;padding:1rem;background:var(--bg2);border-radius:10px;font-size:0.8rem;color:var(--text-muted)">
-              <i class="fas fa-info-circle mr-1"></i>Os dados são armazenados localmente no navegador (localStorage). Exporte regularmente para backup.
-            </div>
-          </div>
-        </div>
-
-        <div class="form-actions">
-          <button class="btn btn-outline" onclick="loadConfig()">Cancelar</button>
-          <button class="btn btn-purple" onclick="saveConfig()"><i class="fas fa-save mr-1"></i>Salvar configurações</button>
-        </div>
-      </div>
-
-    </div><!-- /page-content -->
-  </div><!-- /main-content -->
-</div><!-- /adminApp -->
-
-<!-- ===== MODAIS ===== -->
-
-<!-- Modal Projeto -->
-<div class="modal-overlay" id="modalProjeto">
-  <div class="modal-box">
-    <div class="modal-title"><span id="modalProjetoTitle">Novo Projeto</span><span class="modal-close" onclick="closeModal('modalProjeto')"><i class="fas fa-times"></i></span></div>
-    <input type="hidden" id="projetoId">
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Título</label><input type="text" id="projetoNome" class="form-input" placeholder="Nome do projeto"></div>
-      <div class="form-group"><label class="form-label">Categoria</label>
-        <select id="projetoCategoria" class="form-input">
-          <option>E-commerce</option><option>Imóveis</option><option>Saúde</option>
-          <option>Engenharia</option><option>Veterinária</option><option>Outro</option>
-        </select>
-      </div>
-    </div>
-    <div class="form-row full">
-      <div class="form-group"><label class="form-label">Descrição</label><input type="text" id="projetoDesc" class="form-input" placeholder="Breve descrição"></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">URL da imagem</label><input type="url" id="projetoImg" class="form-input" placeholder="https://..."></div>
-      <div class="form-group"><label class="form-label">Link do site</label><input type="url" id="projetoLink" class="form-input" placeholder="https://..."></div>
-    </div>
-    <div class="form-row full">
-      <div class="form-group"><label class="form-label">Resultado (ex: +240% agendamentos)</label><input type="text" id="projetoResultado" class="form-input" placeholder="Resultado alcançado"></div>
-    </div>
-    <div class="form-actions">
-      <button class="btn btn-outline" onclick="closeModal('modalProjeto')">Cancelar</button>
-      <button class="btn btn-purple" onclick="saveProjeto()"><i class="fas fa-save mr-1"></i>Salvar</button>
-    </div>
+        <div class="card"><h3>Banco de Dados</h3><button onclick="exportDatabase()" class="btn btn-secondary">Backup</button><button onclick="resetDatabase()" class="btn btn-danger">Resetar Tudo</button></div>
+      </section>
+    </main>
   </div>
-</div>
 
-<!-- Modal Plano -->
-<div class="modal-overlay" id="modalPlano">
-  <div class="modal-box">
-    <div class="modal-title"><span id="modalPlanoTitle">Novo Plano</span><span class="modal-close" onclick="closeModal('modalPlano')"><i class="fas fa-times"></i></span></div>
-    <input type="hidden" id="planoId">
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Nome do plano</label><input type="text" id="planoNome" class="form-input" placeholder="Ex: Premium"></div>
-      <div class="form-group"><label class="form-label">Preço (R$)</label><input type="text" id="planoPreco" class="form-input" placeholder="Ex: 2.997"></div>
-    </div>
-    <div class="form-row full">
-      <div class="form-group"><label class="form-label">Descrição</label><input type="text" id="planoDesc" class="form-input" placeholder="Descrição do plano"></div>
-    </div>
-    <div class="form-row full">
-      <div class="form-group">
-        <label class="form-label">Funcionalidades (uma por linha)</label>
-        <textarea id="planoFeatures" class="form-input" rows="5" placeholder="Design exclusivo&#10;Responsivo mobile&#10;SEO básico&#10;3 meses suporte"></textarea>
-      </div>
-    </div>
-    <div class="form-row full">
-      <div class="form-group" style="display:flex;align-items:center;gap:12px">
-        <label class="switch"><input type="checkbox" id="planoFeatured"><span class="slider"></span></label>
-        <label class="form-label" style="margin:0">Marcar como destaque (Mais popular)</label>
-      </div>
-    </div>
-    <div class="form-actions">
-      <button class="btn btn-outline" onclick="closeModal('modalPlano')">Cancelar</button>
-      <button class="btn btn-purple" onclick="savePlano()"><i class="fas fa-save mr-1"></i>Salvar</button>
-    </div>
-  </div>
-</div>
+  <!-- MODAIS -->
+  <div id="serviceModal" class="modal"><div class="modal-content"><h2>Novo Serviço</h2><form id="serviceForm"><div class="form-group"><label>Nome</label><input type="text" id="serviceName" required></div><div class="form-group"><label>URL do Ícone</label><input type="text" id="serviceIconUrl" required></div><button type="submit" class="btn btn-primary w-full">Adicionar</button><button type="button" onclick="closeServiceModal()" class="btn btn-secondary w-full mt-2">Cancelar</button></form></div></div>
+  <div id="caseModal" class="modal"><div class="modal-content"><h2>Novo Case</h2><form id="caseForm"><div class="form-group"><label>Título</label><input type="text" id="caseTitle" required></div><div class="form-group"><label>Instagram/Categoria</label><input type="text" id="caseCategory" required></div><div class="form-group"><label>Resultado</label><input type="text" id="caseResult" required></div><div class="form-group"><label>URL da Imagem</label><input type="text" id="caseImageUrl" required></div><button type="submit" class="btn btn-primary w-full">Adicionar</button><button type="button" onclick="closeCaseModal()" class="btn btn-secondary w-full mt-2">Cancelar</button></form></div></div>
+  <div id="planModal" class="modal"><div class="modal-content"><h2>Novo Plano</h2><form id="planForm"><div class="form-group"><label>Nome</label><input type="text" id="planName" required></div><div class="form-group"><label>Preço</label><input type="number" id="planPrice" required></div><div class="form-group"><label>Descrição</label><input type="text" id="planDesc" required></div><div class="form-group"><label>Features (uma por linha)</label><textarea id="planFeatures" required></textarea></div><button type="submit" class="btn btn-primary w-full">Adicionar</button><button type="button" onclick="closePlanModal()" class="btn btn-secondary w-full mt-2">Cancelar</button></form></div></div>
 
-<!-- Modal Case -->
-<div class="modal-overlay" id="modalCase">
-  <div class="modal-box">
-    <div class="modal-title"><span id="modalCaseTitle">Novo Case</span><span class="modal-close" onclick="closeModal('modalCase')"><i class="fas fa-times"></i></span></div>
-    <input type="hidden" id="caseId">
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Nome</label><input type="text" id="caseNome" class="form-input" placeholder="Nome do cliente"></div>
-      <div class="form-group"><label class="form-label">Handle (@)</label><input type="text" id="caseHandle" class="form-input" placeholder="@usuario"></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Seguidores</label><input type="text" id="caseSeguidores" class="form-input" placeholder="Ex: 16,6M"></div>
-      <div class="form-group"><label class="form-label">URL da foto</label><input type="url" id="caseFoto" class="form-input" placeholder="https://..."></div>
-    </div>
-    <div class="form-row full">
-      <div class="form-group"><label class="form-label">Descrição</label><input type="text" id="caseDesc" class="form-input" placeholder="Breve descrição do case"></div>
-    </div>
-    <div class="form-actions">
-      <button class="btn btn-outline" onclick="closeModal('modalCase')">Cancelar</button>
-      <button class="btn btn-purple" onclick="saveCase()"><i class="fas fa-save mr-1"></i>Salvar</button>
-    </div>
-  </div>
-</div>
+  <script>
+    if(!sessionStorage.getItem('adminLogged')) window.location.href = 'login.html';
 
-<!-- Modal Depoimento -->
-<div class="modal-overlay" id="modalDepoimento">
-  <div class="modal-box">
-    <div class="modal-title"><span>Novo Depoimento</span><span class="modal-close" onclick="closeModal('modalDepoimento')"><i class="fas fa-times"></i></span></div>
-    <input type="hidden" id="depoId">
-    <div class="form-row full">
-      <div class="form-group"><label class="form-label">URL da imagem do depoimento</label><input type="url" id="depoImg" class="form-input" placeholder="https://..."></div>
-    </div>
-    <div class="form-row full">
-      <div class="form-group"><label class="form-label">Texto do depoimento (opcional)</label><textarea id="depoTexto" class="form-input" rows="3" placeholder="O que o cliente disse..."></textarea></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Nome do cliente</label><input type="text" id="depoNome" class="form-input" placeholder="Nome"></div>
-      <div class="form-group"><label class="form-label">Avaliação (1-5)</label>
-        <select id="depoRating" class="form-input">
-          <option value="5">5 estrelas ★★★★★</option>
-          <option value="4">4 estrelas ★★★★</option>
-          <option value="3">3 estrelas ★★★</option>
-          <option value="2">2 estrelas ★★</option>
-          <option value="1">1 estrela ★</option>
-        </select>
-      </div>
-    </div>
-    <div class="form-actions">
-      <button class="btn btn-outline" onclick="closeModal('modalDepoimento')">Cancelar</button>
-      <button class="btn btn-purple" onclick="saveDepoimento()"><i class="fas fa-save mr-1"></i>Salvar</button>
-    </div>
-  </div>
-</div>
-
-<!-- Toast -->
-<div id="toast"><i id="toastIcon" class="fas fa-check-circle" style="color:#4ade80"></i><span id="toastMsg">Salvo com sucesso!</span></div>
-
-<script>
-// ===== BANCO DE DADOS (localStorage) =====
-const DB = {
-  get: (key, def=[]) => JSON.parse(localStorage.getItem('techify_'+key) || JSON.stringify(def)),
-  set: (key, val) => localStorage.setItem('techify_'+key, JSON.stringify(val)),
-  keys: ['projetos','planos','cases','depoimentos','feedbacks','leads','config','activity']
-};
-
-// ===== AUTH =====
-const ADMIN_CREDS = { user: 'admin', pass: 'techify2026' };
-
-function doLogin(){
-  const u = document.getElementById('loginUser').value;
-  const p = document.getElementById('loginPass').value;
-  const cfg = DB.get('config', {});
-  const storedPass = cfg.adminPass || ADMIN_CREDS.pass;
-  if(u === ADMIN_CREDS.user && p === storedPass){
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('adminApp').style.display = 'flex';
-    document.getElementById('loginError').style.display = 'none';
-    initAdmin();
-  } else {
-    document.getElementById('loginError').style.display = 'block';
-  }
-}
-document.addEventListener('keydown', e => { if(e.key === 'Enter') doLogin(); });
-
-function doLogout(){
-  document.getElementById('loginScreen').style.display = 'flex';
-  document.getElementById('adminApp').style.display = 'none';
-  document.getElementById('loginUser').value = '';
-  document.getElementById('loginPass').value = '';
-}
-
-// ===== TABS =====
-function showTab(name, el){
-  document.querySelectorAll('.tab-panel').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('tab-'+name).classList.add('active');
-  if(el) el.classList.add('active');
-  const titles = { dashboard:'Dashboard', projetos:'Projetos', planos:'Planos', cases:'Cases de Sucesso', depoimentos:'Depoimentos', feedbacks:'Feedbacks', leads:'Leads', configuracoes:'Configurações' };
-  document.getElementById('topbarTitle').textContent = titles[name] || name;
-  renderTab(name);
-}
-
-function renderTab(name){
-  if(name==='dashboard') renderDashboard();
-  else if(name==='projetos') renderProjetos();
-  else if(name==='planos') renderPlanos();
-  else if(name==='cases') renderCases();
-  else if(name==='depoimentos') renderDepoimentos();
-  else if(name==='feedbacks') renderFeedbacks();
-  else if(name==='leads') renderLeads();
-  else if(name==='configuracoes') loadConfig();
-}
-
-// ===== INIT =====
-function initAdmin(){
-  // Seed dados padrão se vazio
-  if(!localStorage.getItem('techify_planos')){
-    DB.set('planos', [
-      { id:1, name:'Starter', price:'1.497', description:'Ideal para quem está começando', featured:false, features:['Landing Page','Design exclusivo','Responsivo mobile','Formulário de contato','1 revisão'] },
-      { id:2, name:'Premium', price:'2.997', description:'Para negócios em crescimento', featured:true, features:['Site completo (até 5 páginas)','Design premium','SEO básico','Integração WhatsApp','Blog','3 revisões','3 meses suporte'] },
-      { id:3, name:'Elite', price:'5.997', description:'Para empresas que querem dominar', featured:false, features:['Site completo (ilimitado)','Design ultra premium','SEO avançado','Automação IA','E-commerce','Revisões ilimitadas','6 meses suporte','Gestão de tráfego'] }
-    ]);
-  }
-  if(!localStorage.getItem('techify_cases')){
-    DB.set('cases', [
-      { id:1, nome:'Deive Leonardo', handle:'@deiveleonardo', seguidores:'16,6M', foto:'https://dieselwebp.com/wp-content/uploads/2026/02/IMg-47.png', desc:'Presença digital de alto impacto para o maior pastor evangélico do Brasil.' },
-      { id:2, nome:'Gabriel Ganley', handle:'@ganleygabriel', seguidores:'1,4M', foto:'https://dieselwebp.com/wp-content/uploads/2026/02/IMg-46.png', desc:'Site de alta conversão para influenciador fitness.' },
-      { id:3, nome:'Karina Bacchi', handle:'@karinabacchi', seguidores:'9,5M', foto:'https://dieselwebp.com/wp-content/uploads/2026/02/IMg-48.png', desc:'Plataforma digital premium para apresentadora e empresária.' },
-      { id:4, nome:'Daniel Scott', handle:'@odanielscott', seguidores:'196K', foto:'https://dieselwebp.com/wp-content/uploads/2026/02/IMg-45.png', desc:'Presença digital estratégica para criador de conteúdo.' }
-    ]);
-  }
-  if(!localStorage.getItem('techify_projetos')){
-    DB.set('projetos', [
-      { id:1, nome:'Loja Comassetto', categoria:'E-commerce', desc:'Moda masculina elegante com e-commerce completo.', img:'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=700&q=80', link:'https://comassettomodahomem.com.br', resultado:'+80% vendas online' },
-      { id:2, nome:'Zona Sul Lançamentos', categoria:'Imóveis', desc:'Gestão de imóveis e captação de leads qualificados.', img:'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=700&q=80', link:'https://zonasullancamentos.com.br', resultado:'+120% leads' },
-      { id:3, nome:'Maurício Engenharia', categoria:'Engenharia', desc:'+160% de orçamentos recebidos após novo site.', img:'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=700&q=80', link:'https://mauricioengenharia.com.br', resultado:'+160% orçamentos' },
-      { id:4, nome:'Vet Fidelity', categoria:'Veterinária', desc:'+240% de agendamentos com novo site otimizado.', img:'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=700&q=80', link:'https://vetfidelity.com.br', resultado:'+240% agendamentos' }
-    ]);
-  }
-  addActivity('Admin logado no painel');
-  renderDashboard();
-}
-
-// ===== ACTIVITY LOG =====
-function addActivity(msg){
-  const log = DB.get('activity', []);
-  log.unshift({ msg, time: new Date().toISOString() });
-  if(log.length > 20) log.pop();
-  DB.set('activity', log);
-}
-
-// ===== DASHBOARD =====
-function renderDashboard(){
-  const projetos = DB.get('projetos');
-  const feedbacks = DB.get('feedbacks');
-  const planos = DB.get('planos');
-  const leads = DB.get('leads');
-  document.getElementById('stat-projetos').textContent = projetos.length;
-  document.getElementById('stat-feedbacks').textContent = feedbacks.length;
-  document.getElementById('stat-planos').textContent = planos.length;
-  document.getElementById('stat-leads').textContent = leads.length;
-
-  // Rating médio
-  if(feedbacks.length > 0){
-    const avg = (feedbacks.reduce((a,b) => a + b.rating, 0) / feedbacks.length).toFixed(1);
-    document.getElementById('stat-rating').innerHTML = `<i class="fas fa-star"></i> ${avg} média`;
-  }
-
-  // Activity log
-  const log = DB.get('activity', []);
-  const logEl = document.getElementById('activityLog');
-  if(log.length === 0){
-    logEl.innerHTML = '<div class="empty-state"><i class="fas fa-clock"></i><p>Nenhuma atividade ainda</p></div>';
-  } else {
-    logEl.innerHTML = log.slice(0,8).map(a => `
-      <div class="activity-item">
-        <div class="activity-dot"></div>
-        <div><div class="activity-text">${a.msg}</div><div class="activity-time">${formatDate(a.time)}</div></div>
-      </div>
-    `).join('');
-  }
-
-  // Recent feedbacks
-  const rfEl = document.getElementById('recentFeedbacks');
-  if(feedbacks.length === 0){
-    rfEl.innerHTML = '<div class="empty-state"><i class="fas fa-star"></i><p>Nenhum feedback ainda</p></div>';
-  } else {
-    rfEl.innerHTML = feedbacks.slice(0,3).map(f => `
-      <div class="feedback-item">
-        <div class="feedback-stars">${'★'.repeat(f.rating)}${'☆'.repeat(5-f.rating)}</div>
-        <div class="feedback-msg">${f.message || '(sem mensagem)'}</div>
-        <div class="feedback-date">${formatDate(f.date)}</div>
-      </div>
-    `).join('');
-  }
-
-  // Rating chart
-  const counts = [0,0,0,0,0];
-  feedbacks.forEach(f => { if(f.rating >= 1 && f.rating <= 5) counts[f.rating-1]++; });
-  const max = Math.max(...counts, 1);
-  const bars = document.querySelectorAll('#ratingChart .chart-bar');
-  counts.forEach((c,i) => { if(bars[i]) bars[i].style.height = Math.max(5, (c/max)*100) + '%'; });
-}
-
-// ===== PROJETOS =====
-function renderProjetos(){
-  const items = DB.get('projetos');
-  const el = document.getElementById('projetosGrid');
-  if(items.length === 0){
-    el.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><i class="fas fa-folder-open"></i><p>Nenhum projeto cadastrado</p></div>';
-    return;
-  }
-  el.innerHTML = items.map(p => `
-    <div class="project-item">
-      <img src="${p.img || 'https://via.placeholder.com/400x200?text=Sem+imagem'}" alt="${p.nome}" onerror="this.src='https://via.placeholder.com/400x200?text=Erro'">
-      <div class="project-item-body">
-        <div class="project-item-title">${p.nome}</div>
-        <div class="project-item-desc">${p.desc}</div>
-        <div style="margin-bottom:0.5rem"><span class="badge badge-purple">${p.categoria}</span> ${p.resultado ? `<span class="badge badge-green ml-1">${p.resultado}</span>` : ''}</div>
-        <div class="project-item-actions">
-          <button class="btn btn-outline btn-sm" onclick="editProjeto(${p.id})"><i class="fas fa-edit"></i></button>
-          <button class="btn btn-red btn-sm" onclick="deleteProjeto(${p.id})"><i class="fas fa-trash"></i></button>
-          ${p.link ? `<a href="${p.link}" target="_blank" class="btn btn-outline btn-sm"><i class="fas fa-external-link-alt"></i></a>` : ''}
-        </div>
-      </div>
-    </div>
-  `).join('');
-}
-
-function saveProjeto(){
-  const id = document.getElementById('projetoId').value;
-  const proj = {
-    id: id ? parseInt(id) : Date.now(),
-    nome: document.getElementById('projetoNome').value,
-    categoria: document.getElementById('projetoCategoria').value,
-    desc: document.getElementById('projetoDesc').value,
-    img: document.getElementById('projetoImg').value,
-    link: document.getElementById('projetoLink').value,
-    resultado: document.getElementById('projetoResultado').value
-  };
-  if(!proj.nome){ showToast('Preencha o título!', 'error'); return; }
-  const items = DB.get('projetos');
-  if(id){ const idx = items.findIndex(p => p.id === parseInt(id)); if(idx > -1) items[idx] = proj; }
-  else items.push(proj);
-  DB.set('projetos', items);
-  addActivity(`Projeto "${proj.nome}" ${id ? 'editado' : 'adicionado'}`);
-  closeModal('modalProjeto');
-  renderProjetos();
-  showToast(`Projeto ${id ? 'atualizado' : 'adicionado'} com sucesso!`);
-}
-
-function editProjeto(id){
-  const p = DB.get('projetos').find(x => x.id === id);
-  if(!p) return;
-  document.getElementById('projetoId').value = p.id;
-  document.getElementById('projetoNome').value = p.nome;
-  document.getElementById('projetoCategoria').value = p.categoria;
-  document.getElementById('projetoDesc').value = p.desc;
-  document.getElementById('projetoImg').value = p.img;
-  document.getElementById('projetoLink').value = p.link;
-  document.getElementById('projetoResultado').value = p.resultado || '';
-  document.getElementById('modalProjetoTitle').textContent = 'Editar Projeto';
-  openModal('modalProjeto');
-}
-
-function deleteProjeto(id){
-  if(!confirm('Excluir este projeto?')) return;
-  const items = DB.get('projetos').filter(p => p.id !== id);
-  DB.set('projetos', items);
-  addActivity('Projeto excluído');
-  renderProjetos();
-  showToast('Projeto excluído!', 'error');
-}
-
-// ===== PLANOS =====
-function renderPlanos(){
-  const items = DB.get('planos');
-  const el = document.getElementById('planosGrid');
-  if(items.length === 0){
-    el.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><i class="fas fa-tags"></i><p>Nenhum plano cadastrado</p></div>';
-    return;
-  }
-  el.innerHTML = items.map(p => `
-    <div class="plan-item ${p.featured ? 'featured' : ''}">
-      ${p.featured ? '<span class="badge badge-purple" style="margin-bottom:8px">⭐ Destaque</span>' : ''}
-      <div class="plan-item-name">${p.name}</div>
-      <div class="plan-item-price">R$ ${p.price}</div>
-      <div class="plan-item-features">${p.features.slice(0,3).join(' • ')}${p.features.length > 3 ? '...' : ''}</div>
-      <div class="plan-item-actions">
-        <button class="btn btn-outline btn-sm" onclick="editPlano(${p.id})"><i class="fas fa-edit mr-1"></i>Editar</button>
-        <button class="btn btn-red btn-sm" onclick="deletePlano(${p.id})"><i class="fas fa-trash"></i></button>
-      </div>
-    </div>
-  `).join('');
-}
-
-function savePlano(){
-  const id = document.getElementById('planoId').value;
-  const plan = {
-    id: id ? parseInt(id) : Date.now(),
-    name: document.getElementById('planoNome').value,
-    price: document.getElementById('planoPreco').value,
-    description: document.getElementById('planoDesc').value,
-    features: document.getElementById('planoFeatures').value.split('\n').filter(f => f.trim()),
-    featured: document.getElementById('planoFeatured').checked
-  };
-  if(!plan.name){ showToast('Preencha o nome do plano!', 'error'); return; }
-  const items = DB.get('planos');
-  if(id){ const idx = items.findIndex(p => p.id === parseInt(id)); if(idx > -1) items[idx] = plan; }
-  else items.push(plan);
-  DB.set('planos', items);
-  addActivity(`Plano "${plan.name}" ${id ? 'editado' : 'adicionado'}`);
-  closeModal('modalPlano');
-  renderPlanos();
-  showToast(`Plano ${id ? 'atualizado' : 'adicionado'} com sucesso!`);
-}
-
-function editPlano(id){
-  const p = DB.get('planos').find(x => x.id === id);
-  if(!p) return;
-  document.getElementById('planoId').value = p.id;
-  document.getElementById('planoNome').value = p.name;
-  document.getElementById('planoPreco').value = p.price;
-  document.getElementById('planoDesc').value = p.description;
-  document.getElementById('planoFeatures').value = p.features.join('\n');
-  document.getElementById('planoFeatured').checked = p.featured;
-  document.getElementById('modalPlanoTitle').textContent = 'Editar Plano';
-  openModal('modalPlano');
-}
-
-function deletePlano(id){
-  if(!confirm('Excluir este plano?')) return;
-  DB.set('planos', DB.get('planos').filter(p => p.id !== id));
-  addActivity('Plano excluído');
-  renderPlanos();
-  showToast('Plano excluído!', 'error');
-}
-
-// ===== CASES =====
-function renderCases(){
-  const items = DB.get('cases');
-  const el = document.getElementById('casesTable');
-  if(items.length === 0){
-    el.innerHTML = '<tr><td colspan="5"><div class="empty-state"><i class="fas fa-users"></i><p>Nenhum case cadastrado</p></div></td></tr>';
-    return;
-  }
-  el.innerHTML = items.map(c => `
-    <tr>
-      <td><div style="display:flex;align-items:center;gap:10px"><img src="${c.foto}" style="width:36px;height:36px;border-radius:50%;object-fit:cover" onerror="this.style.display='none'"><strong>${c.nome}</strong></div></td>
-      <td><span style="color:#94a3b8">${c.handle}</span></td>
-      <td><span class="badge badge-green">${c.seguidores}</span></td>
-      <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.desc}</td>
-      <td>
-        <div style="display:flex;gap:4px">
-          <button class="btn btn-outline btn-sm" onclick="editCase(${c.id})"><i class="fas fa-edit"></i></button>
-          <button class="btn btn-red btn-sm" onclick="deleteCase(${c.id})"><i class="fas fa-trash"></i></button>
-        </div>
-      </td>
-    </tr>
-  `).join('');
-}
-
-function saveCase(){
-  const id = document.getElementById('caseId').value;
-  const c = {
-    id: id ? parseInt(id) : Date.now(),
-    nome: document.getElementById('caseNome').value,
-    handle: document.getElementById('caseHandle').value,
-    seguidores: document.getElementById('caseSeguidores').value,
-    foto: document.getElementById('caseFoto').value,
-    desc: document.getElementById('caseDesc').value
-  };
-  if(!c.nome){ showToast('Preencha o nome!', 'error'); return; }
-  const items = DB.get('cases');
-  if(id){ const idx = items.findIndex(x => x.id === parseInt(id)); if(idx > -1) items[idx] = c; }
-  else items.push(c);
-  DB.set('cases', items);
-  addActivity(`Case "${c.nome}" ${id ? 'editado' : 'adicionado'}`);
-  closeModal('modalCase');
-  renderCases();
-  showToast('Case salvo com sucesso!');
-}
-
-function editCase(id){
-  const c = DB.get('cases').find(x => x.id === id);
-  if(!c) return;
-  document.getElementById('caseId').value = c.id;
-  document.getElementById('caseNome').value = c.nome;
-  document.getElementById('caseHandle').value = c.handle;
-  document.getElementById('caseSeguidores').value = c.seguidores;
-  document.getElementById('caseFoto').value = c.foto;
-  document.getElementById('caseDesc').value = c.desc;
-  document.getElementById('modalCaseTitle').textContent = 'Editar Case';
-  openModal('modalCase');
-}
-
-function deleteCase(id){
-  if(!confirm('Excluir este case?')) return;
-  DB.set('cases', DB.get('cases').filter(c => c.id !== id));
-  addActivity('Case excluído');
-  renderCases();
-  showToast('Case excluído!', 'error');
-}
-
-// ===== DEPOIMENTOS =====
-function renderDepoimentos(){
-  const items = DB.get('depoimentos');
-  const el = document.getElementById('depoimentosGrid');
-  if(items.length === 0){
-    el.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><i class="fas fa-images"></i><p>Nenhum depoimento cadastrado</p></div>';
-    return;
-  }
-  el.innerHTML = items.map(d => `
-    <div class="project-item">
-      ${d.img ? `<img src="${d.img}" alt="Depoimento" onerror="this.style.display='none'">` : ''}
-      <div class="project-item-body">
-        ${d.nome ? `<div class="project-item-title">${d.nome}</div>` : ''}
-        ${d.texto ? `<div class="project-item-desc">"${d.texto}"</div>` : ''}
-        <div style="color:#facc15;margin-bottom:0.5rem">${'★'.repeat(d.rating || 5)}</div>
-        <div class="project-item-actions">
-          <button class="btn btn-red btn-sm" onclick="deleteDepoimento(${d.id})"><i class="fas fa-trash"></i></button>
-        </div>
-      </div>
-    </div>
-  `).join('');
-}
-
-function saveDepoimento(){
-  const d = {
-    id: Date.now(),
-    img: document.getElementById('depoImg').value,
-    texto: document.getElementById('depoTexto').value,
-    nome: document.getElementById('depoNome').value,
-    rating: parseInt(document.getElementById('depoRating').value)
-  };
-  const items = DB.get('depoimentos');
-  items.push(d);
-  DB.set('depoimentos', items);
-  addActivity('Depoimento adicionado');
-  closeModal('modalDepoimento');
-  renderDepoimentos();
-  showToast('Depoimento adicionado!');
-}
-
-function deleteDepoimento(id){
-  if(!confirm('Excluir este depoimento?')) return;
-  DB.set('depoimentos', DB.get('depoimentos').filter(d => d.id !== id));
-  renderDepoimentos();
-  showToast('Depoimento excluído!', 'error');
-}
-
-// ===== FEEDBACKS =====
-function renderFeedbacks(){
-  const items = DB.get('feedbacks');
-  const el = document.getElementById('feedbacksList');
-  if(items.length === 0){
-    el.innerHTML = '<div class="empty-state"><i class="fas fa-star"></i><p>Nenhum feedback recebido ainda</p></div>';
-    return;
-  }
-  el.innerHTML = items.map((f,i) => `
-    <div class="feedback-item">
-      <div style="display:flex;justify-content:space-between;align-items:start">
-        <div>
-          <div class="feedback-stars">${'★'.repeat(f.rating)}${'☆'.repeat(5-f.rating)} <span style="color:var(--text-muted);font-size:0.8rem">(${f.rating}/5)</span></div>
-          <div class="feedback-msg">${f.message || '<em style="color:var(--text-muted)">Sem mensagem</em>'}</div>
-          <div class="feedback-date">${formatDate(f.date)}</div>
-        </div>
-        <button class="btn btn-red btn-sm" onclick="deleteFeedback(${i})"><i class="fas fa-trash"></i></button>
-      </div>
-    </div>
-  `).join('');
-}
-
-function deleteFeedback(idx){
-  const items = DB.get('feedbacks');
-  items.splice(idx, 1);
-  DB.set('feedbacks', items);
-  renderFeedbacks();
-  renderDashboard();
-  showToast('Feedback excluído!', 'error');
-}
-
-function clearFeedbacks(){
-  if(!confirm('Limpar todos os feedbacks?')) return;
-  DB.set('feedbacks', []);
-  renderFeedbacks();
-  renderDashboard();
-  showToast('Feedbacks limpos!', 'error');
-}
-
-// ===== LEADS =====
-function renderLeads(){
-  const items = DB.get('leads');
-  const el = document.getElementById('leadsTable');
-  if(items.length === 0){
-    el.innerHTML = '<tr><td colspan="6"><div class="empty-state"><i class="fas fa-envelope"></i><p>Nenhum lead ainda</p></div></td></tr>';
-    return;
-  }
-  el.innerHTML = items.map((l,i) => `
-    <tr>
-      <td><strong>${l.nome || '—'}</strong></td>
-      <td>${l.email || '—'}</td>
-      <td>${l.whatsapp || '—'}</td>
-      <td><span class="badge badge-purple">${l.interesse || '—'}</span></td>
-      <td style="color:var(--text-muted);font-size:0.8rem">${formatDate(l.date)}</td>
-      <td>
-        <div style="display:flex;gap:4px">
-          ${l.whatsapp ? `<a href="https://wa.me/55${l.whatsapp.replace(/\D/g,'')}" target="_blank" class="btn btn-green btn-sm"><i class="fab fa-whatsapp"></i></a>` : ''}
-          <button class="btn btn-red btn-sm" onclick="deleteLead(${i})"><i class="fas fa-trash"></i></button>
-        </div>
-      </td>
-    </tr>
-  `).join('');
-}
-
-function addLead(){
-  const lead = {
-    nome: document.getElementById('leadNome').value,
-    email: document.getElementById('leadEmail').value,
-    whatsapp: document.getElementById('leadWpp').value,
-    interesse: document.getElementById('leadInteresse').value,
-    date: new Date().toISOString()
-  };
-  if(!lead.nome && !lead.email){ showToast('Preencha nome ou email!', 'error'); return; }
-  const items = DB.get('leads');
-  items.unshift(lead);
-  DB.set('leads', items);
-  addActivity(`Lead "${lead.nome || lead.email}" adicionado`);
-  renderLeads();
-  renderDashboard();
-  document.getElementById('leadNome').value = '';
-  document.getElementById('leadEmail').value = '';
-  document.getElementById('leadWpp').value = '';
-  showToast('Lead adicionado com sucesso!');
-}
-
-function deleteLead(idx){
-  const items = DB.get('leads');
-  items.splice(idx, 1);
-  DB.set('leads', items);
-  renderLeads();
-  renderDashboard();
-  showToast('Lead excluído!', 'error');
-}
-
-function clearLeads(){
-  if(!confirm('Limpar todos os leads?')) return;
-  DB.set('leads', []);
-  renderLeads();
-  renderDashboard();
-  showToast('Leads limpos!', 'error');
-}
-
-function exportLeads(){
-  const items = DB.get('leads');
-  if(items.length === 0){ showToast('Nenhum lead para exportar!', 'error'); return; }
-  const csv = ['Nome,Email,WhatsApp,Interesse,Data', ...items.map(l => `"${l.nome}","${l.email}","${l.whatsapp}","${l.interesse}","${formatDate(l.date)}"`).join('\n')].join('\n');
-  const blob = new Blob([csv], { type: 'text/csv' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url; a.download = 'leads-techify.csv'; a.click();
-  showToast('Leads exportados!');
-}
-
-// ===== CONFIGURAÇÕES =====
-function loadConfig(){
-  const cfg = DB.get('config', {});
-  if(cfg.sitename) document.getElementById('cfg-sitename').value = cfg.sitename;
-  if(cfg.whatsapp) document.getElementById('cfg-whatsapp').value = cfg.whatsapp;
-  if(cfg.instagram) document.getElementById('cfg-instagram').value = cfg.instagram;
-  if(cfg.email) document.getElementById('cfg-email').value = cfg.email;
-  if(cfg.slogan) document.getElementById('cfg-slogan').value = cfg.slogan;
-  if(cfg.nome) document.getElementById('cfg-nome').value = cfg.nome;
-  if(cfg.idade) document.getElementById('cfg-idade').value = cfg.idade;
-  if(cfg.bio) document.getElementById('cfg-bio').value = cfg.bio;
-}
-
-function saveConfig(){
-  const newPass = document.getElementById('cfg-newpass').value;
-  const confirmPass = document.getElementById('cfg-confirmpass').value;
-  if(newPass && newPass !== confirmPass){ showToast('Senhas não coincidem!', 'error'); return; }
-  const cfg = {
-    sitename: document.getElementById('cfg-sitename').value,
-    whatsapp: document.getElementById('cfg-whatsapp').value,
-    instagram: document.getElementById('cfg-instagram').value,
-    email: document.getElementById('cfg-email').value,
-    slogan: document.getElementById('cfg-slogan').value,
-    nome: document.getElementById('cfg-nome').value,
-    idade: document.getElementById('cfg-idade').value,
-    bio: document.getElementById('cfg-bio').value,
-    adminPass: newPass || DB.get('config', {}).adminPass || 'techify2026'
-  };
-  DB.set('config', cfg);
-  addActivity('Configurações atualizadas');
-  document.getElementById('cfg-newpass').value = '';
-  document.getElementById('cfg-confirmpass').value = '';
-  showToast('Configurações salvas com sucesso!');
-}
-
-// ===== DATABASE EXPORT/IMPORT =====
-function exportDB(){
-  const data = {};
-  DB.keys.forEach(k => { data[k] = DB.get(k); });
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url; a.download = 'techify-backup.json'; a.click();
-  showToast('Backup exportado com sucesso!');
-}
-
-function importDB(input){
-  const file = input.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    try {
-      const data = JSON.parse(e.target.result);
-      DB.keys.forEach(k => { if(data[k]) DB.set(k, data[k]); });
-      addActivity('Banco de dados importado');
-      renderDashboard();
-      showToast('Dados importados com sucesso!');
-    } catch(err) {
-      showToast('Arquivo inválido!', 'error');
+    function showSection(id) {
+      document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+      if(id === 'dashboard') updateDashboard();
+      if(id === 'leads') loadLeads();
+      if(id === 'servicos') loadServices();
+      if(id === 'cases') loadCases();
+      if(id === 'planos') loadPlans();
     }
-  };
-  reader.readAsText(file);
-}
 
-function resetDB(){
-  if(!confirm('ATENÇÃO: Isso apagará TODOS os dados. Tem certeza?')) return;
-  if(!confirm('Esta ação é irreversível. Confirmar?')) return;
-  DB.keys.forEach(k => localStorage.removeItem('techify_'+k));
-  addActivity('Banco de dados resetado');
-  initAdmin();
-  renderDashboard();
-  showToast('Banco de dados resetado!', 'error');
-}
+    function initializeData() {
+      if (!localStorage.getItem('techify_services')) {
+        localStorage.setItem('techify_services', JSON.stringify([
+          { id: 1, name: 'Design', icon_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Graphic_Design_icon.svg/200px-Graphic_Design_icon.svg.png' },
+          { id: 2, name: 'Criação Sites', icon_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/HTML5_logo_and_wordmark.svg/200px-HTML5_logo_and_wordmark.svg.png' },
+          { id: 3, name: 'Social Media', icon_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Logonetflix.png/200px-Logonetflix.png' },
+          { id: 4, name: 'Automação IA', icon_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Robot_icon.svg/200px-Robot_icon.svg.png' },
+          { id: 5, name: 'Identidade Visual', icon_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Logo_Nike.svg/200px-Logo_Nike.svg.png' }
+        ]));
+      }
+      if (!localStorage.getItem('techify_cases')) {
+        localStorage.setItem('techify_cases', JSON.stringify([
+          { id: 1, title: 'Deive Leonardo', category: '@deiveleonardo', result: '16,6M seguidores', image: 'https://dieselwebp.com/wp-content/uploads/2026/02/IMg-47.png' },
+          { id: 2, title: 'Gabriel Ganley', category: '@ganleygabriel', result: '1,4M seguidores', image: 'https://dieselwebp.com/wp-content/uploads/2026/02/IMg-46.png' },
+          { id: 3, title: 'Karina Bacchi', category: '@karinabacchi', result: '9,5M seguidores', image: 'https://dieselwebp.com/wp-content/uploads/2026/02/IMg-48.png' },
+          { id: 4, title: 'Daniel Scott', category: '@odanielscott', result: '196K seguidores', image: 'https://dieselwebp.com/wp-content/uploads/2026/02/IMg-45.png' }
+        ]));
+      }
+      if (!localStorage.getItem('techify_plans')) {
+        localStorage.setItem('techify_plans', JSON.stringify([
+          { id: 1, name: 'Starter', price: 1497, desc: 'Perfeito para começar', features: ['1 página', 'Design responsivo', 'SEO básico'] },
+          { id: 2, name: 'Premium', price: 2997, desc: 'Recomendado', features: ['Até 5 páginas', 'Design exclusivo', 'SEO otimizado'], featured: true }
+        ]));
+      }
+      if (!localStorage.getItem('techify_about')) {
+        localStorage.setItem('techify_about', JSON.stringify({ name: 'Marcos Henrique', bio: 'Tenho 19 anos e empreendo desde os 16...', photo: 'marcos.jpg' }));
+      }
+      updateDashboard();
+    }
 
-// ===== MODAIS =====
-function openModal(id){
-  document.getElementById(id).classList.add('open');
-}
-function closeModal(id){
-  document.getElementById(id).classList.remove('open');
-  // Limpar campos
-  const modal = document.getElementById(id);
-  modal.querySelectorAll('input:not([type=hidden]):not([type=checkbox]), textarea, select').forEach(el => {
-    if(el.tagName === 'SELECT') el.selectedIndex = 0;
-    else el.value = '';
-  });
-  modal.querySelectorAll('input[type=checkbox]').forEach(el => el.checked = false);
-  modal.querySelectorAll('input[type=hidden]').forEach(el => el.value = '');
-}
+    function updateDashboard() {
+      const leads = JSON.parse(localStorage.getItem('techify_leads')) || [];
+      document.getElementById('totalLeads').textContent = leads.length;
+      document.getElementById('totalCases').textContent = (JSON.parse(localStorage.getItem('techify_cases')) || []).length;
+      document.getElementById('totalServicos').textContent = (JSON.parse(localStorage.getItem('techify_services')) || []).length;
+      if(leads.length > 0) document.getElementById('recentActivity').innerHTML = `<p>Novo lead: ${leads[leads.length-1].name}</p>`;
+    }
 
-// Fechar modal ao clicar fora
-document.querySelectorAll('.modal-overlay').forEach(m => {
-  m.addEventListener('click', e => { if(e.target === m) m.classList.remove('open'); });
-});
+    function loadLeads() {
+      const leads = JSON.parse(localStorage.getItem('techify_leads')) || [];
+      document.getElementById('leadsTable').innerHTML = leads.map((l, i) => `<tr><td>${l.name}</td><td>${l.phone}</td><td>${l.interest}</td><td>${l.rating}⭐</td><td>${l.date}</td><td><button onclick="deleteLead(${i})" class="btn-danger">Deletar</button></td></tr>`).join('');
+    }
 
-// ===== TOAST =====
-let toastTimer;
-function showToast(msg, type='success'){
-  const toast = document.getElementById('toast');
-  const icon = document.getElementById('toastIcon');
-  document.getElementById('toastMsg').textContent = msg;
-  toast.className = `show ${type}`;
-  icon.className = type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
-  icon.style.color = type === 'success' ? '#4ade80' : '#f87171';
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
-}
+    function deleteLead(i) {
+      let leads = JSON.parse(localStorage.getItem('techify_leads'));
+      leads.splice(i, 1);
+      localStorage.setItem('techify_leads', JSON.stringify(leads));
+      loadLeads();
+    }
 
-// ===== UTILS =====
-function formatDate(iso){
-  if(!iso) return '—';
-  const d = new Date(iso);
-  return d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
-}
-</script>
+    function loadServices() {
+      const services = JSON.parse(localStorage.getItem('techify_services')) || [];
+      document.getElementById('servicesContainer').innerHTML = services.map((s, i) => `<div class="card"><h3>${s.name}</h3><img src="${s.icon_url}" style="width:50px"><button onclick="deleteService(${i})" class="btn-danger mt-2">Deletar</button></div>`).join('');
+    }
+
+    function openServiceModal() { document.getElementById('serviceModal').classList.add('active'); }
+    function closeServiceModal() { document.getElementById('serviceModal').classList.remove('active'); }
+    document.getElementById('serviceForm').onsubmit = (e) => {
+      e.preventDefault();
+      let services = JSON.parse(localStorage.getItem('techify_services')) || [];
+      services.push({ id: Date.now(), name: document.getElementById('serviceName').value, icon_url: document.getElementById('serviceIconUrl').value });
+      localStorage.setItem('techify_services', JSON.stringify(services));
+      closeServiceModal(); loadServices();
+    };
+
+    function loadCases() {
+      const cases = JSON.parse(localStorage.getItem('techify_cases')) || [];
+      document.getElementById('casesContainer').innerHTML = cases.map((c, i) => `<div class="card"><h3>${c.title}</h3><p>${c.result}</p><button onclick="deleteCase(${i})" class="btn-danger mt-2">Deletar</button></div>`).join('');
+    }
+
+    function openCaseModal() { document.getElementById('caseModal').classList.add('active'); }
+    function closeCaseModal() { document.getElementById('caseModal').classList.remove('active'); }
+    document.getElementById('caseForm').onsubmit = (e) => {
+      e.preventDefault();
+      let cases = JSON.parse(localStorage.getItem('techify_cases')) || [];
+      cases.push({ id: Date.now(), title: document.getElementById('caseTitle').value, category: document.getElementById('caseCategory').value, result: document.getElementById('caseResult').value, image: document.getElementById('caseImageUrl').value });
+      localStorage.setItem('techify_cases', JSON.stringify(cases));
+      closeCaseModal(); loadCases();
+    };
+
+    function loadPlans() {
+      const plans = JSON.parse(localStorage.getItem('techify_plans')) || [];
+      document.getElementById('plansContainer').innerHTML = plans.map((p, i) => `<div class="card"><h3>${p.name} - R$ ${p.price}</h3><button onclick="deletePlan(${i})" class="btn-danger mt-2">Deletar</button></div>`).join('');
+    }
+
+    function openPlanModal() { document.getElementById('planModal').classList.add('active'); }
+    function closePlanModal() { document.getElementById('planModal').classList.remove('active'); }
+    document.getElementById('planForm').onsubmit = (e) => {
+      e.preventDefault();
+      let plans = JSON.parse(localStorage.getItem('techify_plans')) || [];
+      plans.push({ id: Date.now(), name: document.getElementById('planName').value, price: parseInt(document.getElementById('planPrice').value), desc: document.getElementById('planDesc').value, features: document.getElementById('planFeatures').value.split('\n') });
+      localStorage.setItem('techify_plans', JSON.stringify(plans));
+      closePlanModal(); loadPlans();
+    };
+
+    document.getElementById('aboutForm').onsubmit = (e) => {
+      e.preventDefault();
+      localStorage.setItem('techify_about', JSON.stringify({ name: document.getElementById('aboutName').value, bio: document.getElementById('aboutBio').value, photo: document.getElementById('aboutPhoto').value }));
+      alert('Salvo!');
+    };
+
+    function exportDatabase() {
+      const data = { leads: JSON.parse(localStorage.getItem('techify_leads')), services: JSON.parse(localStorage.getItem('techify_services')), cases: JSON.parse(localStorage.getItem('techify_cases')), plans: JSON.parse(localStorage.getItem('techify_plans')), about: JSON.parse(localStorage.getItem('techify_about')), settings: JSON.parse(localStorage.getItem('techify_settings')) };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'backup.json'; a.click();
+    }
+
+    function resetDatabase() { if(confirm('Resetar tudo?')) { localStorage.clear(); location.reload(); } }
+    function logout() { sessionStorage.removeItem('adminLogged'); location.reload(); }
+
+    initializeData();
+    const about = JSON.parse(localStorage.getItem('techify_about'));
+    if(about) { document.getElementById('aboutName').value = about.name; document.getElementById('aboutBio').value = about.bio; document.getElementById('aboutPhoto').value = about.photo; }
+  </script>
 </body>
 </html>
